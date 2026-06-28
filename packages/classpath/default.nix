@@ -1,13 +1,14 @@
 {
-  zip,
-  fastjar,
   breakpointHook,
-  glib,
-  pkg-config,
-  findutils,
-  stdenv,
+  fastjar,
   fetchurl,
+  findutils,
+  glib,
   jikes,
+  lib,
+  pkg-config,
+  stdenv,
+  zip,
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "classpath";
@@ -36,5 +37,8 @@ stdenv.mkDerivation (finalAttrs: {
   src = fetchurl {
     url = "mirror://gnu/classpath/classpath-${finalAttrs.version}.tar.gz";
     hash = "sha256-3y0JNhKr0j/mfpQJ2JuyqOebFmT+Ky2kDhyO1pPjKUU=";
+  };
+  meta = {
+    license = lib.licenses.gpl2Only;
   };
 })
