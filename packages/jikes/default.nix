@@ -12,5 +12,6 @@ stdenv.mkDerivation (finalAttrs: {
   };
   meta = {
     license = lib.licenses.ipl10;
+    mainProgram = "jikes";
   };
 })

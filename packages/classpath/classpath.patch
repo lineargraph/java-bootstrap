@@ -33,7 +33,16 @@
  
 --- a/native/jni/native-lib/cpio.c
 +++ b/native/jni/native-lib/cpio.c
-@@ -450,16 +450,9 @@ int cpio_closeDir (void *handle)
+@@ -368,6 +368,8 @@ int cpio_checkType (const char *filename, jint *entryType)
+ {
+   struct stat statbuf;
+ 
++  *entryType = CPFILE_UNKNOWN;
++
+   if (stat(filename, &statbuf) < 0)
+     return errno;
+ 
+@@ -450,16 +452,9 @@ int cpio_closeDir (void *handle)
  
  int cpio_readDir (void *handle, char *filename)
  {
@@ -50,6 +59,16 @@
  
    if (dBuf == NULL)
      {
+--- a/native/jni/native-lib/cpio.h
++++ b/native/jni/native-lib/cpio.h
+@@ -68,6 +68,7 @@ JNIEXPORT int cpio_closeOnExec(int fd);
+ 
+ #define CPFILE_FILE 0
+ #define CPFILE_DIRECTORY 1
++#define CPFILE_UNKNOWN 2
+ 
+ JNIEXPORT int cpio_setFileReadonly (const char *filename);
+ JNIEXPORT int cpio_isFileExists (const char *filename);
 --- a/native/jni/native-lib/cpproc.c
 +++ b/native/jni/native-lib/cpproc.c
 @@ -86,7 +86,10 @@ int cpproc_forkAndExec (char * const *commandLine, char * const * newEnviron,
