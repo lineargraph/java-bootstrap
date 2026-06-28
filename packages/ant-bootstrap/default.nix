@@ -1,7 +1,6 @@
 {
   lib,
   breakpointHook,
-  classpath,
   fetchurl,
   stdenv,
   jikes,
@@ -13,6 +12,7 @@ stdenv.mkDerivation {
     url = "https://archive.apache.org/dist/ant/source/apache-ant-1.8.4-src.tar.gz";
     hash = "sha256-328Krt4lSdxDR7ly78gDbAGnN8qsVFuLpDohaHvFIec=";
   };
+  patches = [ ./ant.patch ];
   nativeBuildInputs = [
     jamvm
     jikes
@@ -21,8 +21,11 @@ stdenv.mkDerivation {
   buildInputs = [ jamvm ];
   JAVACMD = "${lib.getExe jamvm}";
   JAVAC = "${lib.getExe jikes}";
+  ANT_OPTS = "-Dbuild.compiler=jikes -Djvm=jamvm";
   buildPhase = ''
-    ./bootstrap.sh
-    exit 1
+    ./build.sh -Ddist.dir=./dist dist
+  '';
+  installPhase = ''
+    ANT_HOME=$out ./build.sh install
   '';
 }

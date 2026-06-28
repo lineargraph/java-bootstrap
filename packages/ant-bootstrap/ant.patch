@@ -1,0 +1,117 @@
+--- a/build.xml
++++ b/build.xml
+@@ -883,8 +883,9 @@
+          Create the essential distribution that can run Apache Ant
+        ===================================================================
+   -->
++  <!-- depends="jars,test-jar", test-jar seems to cause trouble without junit -->
+   <target name="dist-lite"
+-    depends="jars,test-jar"
++    depends="jars"
+     description="--> creates a minimum distribution to run Apache Ant">
+ 
+     <mkdir dir="${dist.dir}"/>
+@@ -979,28 +980,28 @@
+     <copy todir="${dist.lib}" file="${lib.dir}/README"/>
+     <copy todir="${dist.lib}" file="${lib.dir}/libraries.properties"/>
+ 
+-    <copy todir="${dist.lib}">
+-        <fileset dir="${src.dir}/etc/poms">
+-            <include name="*/pom.xml"/>
+-        </fileset>
+-        <mapper type="regexp" from="^(.*)[/\\]pom.xml" to="\1.pom"/>
+-        <filterchain>
+-            <tokenfilter>
+-                <replaceregex pattern="${pom.version}" replace="${project.version}"/>
+-            </tokenfilter>
+-        </filterchain>
+-    </copy>
+-    <copy todir="${dist.lib}">
+-        <fileset dir="${src.dir}/etc/poms">
+-            <include name="pom.xml"/>
+-        </fileset>
+-        <mapper type="glob" from="pom.xml" to="ant-parent.pom"/>
+-        <filterchain>
+-            <tokenfilter>
+-                <replaceregex pattern="${pom.version}" replace="${project.version}"/>
+-            </tokenfilter>
+-        </filterchain>
+-    </copy>
++    <!-- <copy todir="${dist.lib}"> -->
++    <!--     <fileset dir="${src.dir}/etc/poms"> -->
++    <!--         <include name="*/pom.xml"/> -->
++    <!--     </fileset> -->
++    <!--     <mapper type="regexp" from="^(.*)[/\\]pom.xml" to="\1.pom"/> -->
++    <!--     <filterchain> -->
++    <!--         <tokenfilter> -->
++    <!--             <replaceregex pattern="${pom.version}" replace="${project.version}"/> -->
++    <!--         </tokenfilter> -->
++    <!--     </filterchain> -->
++    <!-- </copy> -->
++    <!-- <copy todir="${dist.lib}"> -->
++    <!--     <fileset dir="${src.dir}/etc/poms"> -->
++    <!--         <include name="pom.xml"/> -->
++    <!--     </fileset> -->
++    <!--     <mapper type="glob" from="pom.xml" to="ant-parent.pom"/> -->
++    <!--     <filterchain> -->
++    <!--         <tokenfilter> -->
++    <!--             <replaceregex pattern="${pom.version}" replace="${project.version}"/> -->
++    <!--         </tokenfilter> -->
++    <!--     </filterchain> -->
++    <!-- </copy> -->
+ 
+ 
+     <copy todir="${dist.manual}">
+@@ -1347,7 +1348,7 @@
+       Uploading Ant version ${project.version}
+       to host ${ssh.host} as ${apache.user}
+       distribution to ${ssh.dist.directory}
+-      maven artefacts to ${ssh.java-repository.directory}	
++      maven artefacts to ${ssh.java-repository.directory}
+       Known hosts = ${ssh.knownhosts}
+     </echo>
+   </target>
+@@ -1449,14 +1450,14 @@
+ 
+   <target name="javadocs" depends="prepare, javadoc_check, check_for_optional_packages, -javadocs.do, -javadocs.dont"
+     description="--> creates the API documentation"/>
+-    
++
+   <target name="-javadocs.dont" unless="jdk1.5+">
+     <echo>Javadoc creation of Ant's API does not work with JDK 1.4. Please use a newer one.</echo>
+   </target>
+   <target name="-javadocs.do" if="jdk1.5+" unless="javadoc.notrequired">
+     <mkdir dir="${build.javadocs}"/>
+     <javadoc useexternalfile="yes"
+-      maxmemory="1000M"	
++      maxmemory="1000M"
+       destdir="${build.javadocs}"
+       author="true"
+       version="true"
+@@ -1667,7 +1668,7 @@ see ${build.junit.reports} / ${antunit.reports}
+             <path refid="tests-runtime-classpath"/>
+             <pathelement location="${junit.collector.dir}"/>
+             <!-- FIXME: remove failure collector build code for the moment
+-                 <path refid="failure.cp"/> 
++                 <path refid="failure.cp"/>
+                  -->
+           </classpath>
+           <!-- FIXME: remove failure collector build code for the moment
+@@ -1957,13 +1958,13 @@ see ${build.junit.reports} / ${antunit.reports}
+       <fileset dir="${antunit.xml}" includes="TEST-*.xml" />
+     </length>
+   </target>
+-  
+-  
++
++
+   <target name="printFailingTests">
+     <property name="failingtests.dir" value="${build.dir}/errors"/>
+     <mkdir dir=""/>
+-    <xslt 
+-      style="${etc.dir}/printFailingTests.xsl" 
++    <xslt
++      style="${etc.dir}/printFailingTests.xsl"
+       destdir="${failingtests.dir}" extension=".txt"
+       basedir="${build.dir}" includes="testcases/**/TEST-*.xml,antunit/xml/TEST-*.xml"
+     />
