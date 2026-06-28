@@ -1,4 +1,5 @@
 {
+  gdb,
   mkShell,
   just,
   treefmt-wrapper,
@@ -11,5 +12,6 @@ mkShell {
     cntr
     just
     nix-fast-build
+    gdb
   ];
 }

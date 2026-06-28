@@ -9,9 +9,7 @@
 stdenv.mkDerivation (finalAttrs: {
   name = "jamvm";
   version = "1.5.1";
-  nativeBuildInputs = [
-    breakpointHook
-  ];
+  nativeBuildInputs = [ ];
   patches = [
     ./jamvm.patch
   ];

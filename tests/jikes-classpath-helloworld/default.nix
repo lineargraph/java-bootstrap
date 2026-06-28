@@ -1,4 +1,5 @@
 {
+  jamvm,
   zip,
   jikes,
   classpath,
@@ -13,6 +14,10 @@ stdenv.mkDerivation (finalAttrs: {
   buildInputs = [
     classpath
   ];
+  checkInputs = [ jamvm ];
+  checkPhase = ''
+    jamvm -jar $out/*.jar
+  '';
   src = ./.;
   buildPhase = ''
     jikes Main.java
