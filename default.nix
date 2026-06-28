@@ -15,8 +15,17 @@ let
   outputs = {
     shell = callPackage ./shell.nix { };
     treefmt-wrapper = callPackage ./treefmt-wrapper.nix { };
-    jikes = callPackage ./packages/jikes { };
+    # jikes = callPackage ./packages/jikes { };
     inherit pkgs lib;
-  };
+  }
+  // lib.pipe ./packages [
+    builtins.readDir
+    lib.attrNames
+    (lib.map (name: {
+      inherit name;
+      value = callPackage "${./packages}/${name}" { };
+    }))
+    lib.listToAttrs
+  ];
 in
 outputs

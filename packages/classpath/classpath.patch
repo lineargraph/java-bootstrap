@@ -1,0 +1,66 @@
+--- a/native/fdlibm/dtoa.c
++++ b/native/fdlibm/dtoa.c
+@@ -25,6 +25,7 @@
+ 	U.S.A.
+ 	dmg@research.att.com or research!dmg
+  */
++#include <stdlib.h>
+ 
+ #include "mprec.h"
+ #include <string.h>
+--- a/native/jni/classpath/native_state.c
++++ b/native/jni/classpath/native_state.c
+@@ -59,8 +59,7 @@ cp_gtk_init_state_table_with_size (JNIEnv * env, jclass clazz, jint size)
+ 
+   table = (struct state_table *) malloc (sizeof (struct state_table));
+   table->size = size;
+-  table->head = (struct state_node **) calloc (sizeof (struct state_node *),
+-					       table->size);
++  table->head = (struct state_node **) calloc (table->size, sizeof (struct state_node *));
+   table->hash = hash;
+   table->clazz = clazz_g;
+ 
+--- a/native/jni/java-lang/java_lang_VMProcess.c
++++ b/native/jni/java-lang/java_lang_VMProcess.c
+@@ -209,7 +209,7 @@ Java_java_lang_VMProcess_nativeSpawn (JNIEnv * env, jobject this,
+   err = cpproc_forkAndExec(strings, newEnviron, fds, pipe_count, &pid, dir);
+   if (err != 0)
+     {
+-      strncpy(errbuf, cpnative_getErrorString (err), sizeof(errbuf));
++      snprintf (errbuf, sizeof(errbuf), "%s", cpnative_getErrorString (err));
+       goto system_error;
+     }
+ 
+--- a/native/jni/native-lib/cpio.c
++++ b/native/jni/native-lib/cpio.c
+@@ -450,16 +450,9 @@ int cpio_closeDir (void *handle)
+ 
+ int cpio_readDir (void *handle, char *filename)
+ {
+-#ifdef HAVE_READDIR_R
+-  struct dirent dent;
+-#endif /* HAVE_READDIR_R */
+   struct dirent *dBuf;
+ 
+-#ifdef HAVE_READDIR_R
+-  readdir_r ((DIR *) handle, &dent, &dBuf);
+-#else
+   dBuf = readdir((DIR *)handle);
+-#endif /* HAVE_READDIR_R */
+ 
+   if (dBuf == NULL)
+     {
+--- a/native/jni/native-lib/cpproc.c
++++ b/native/jni/native-lib/cpproc.c
+@@ -86,7 +86,10 @@ int cpproc_forkAndExec (char * const *commandLine, char * const * newEnviron,
+ 
+       close_all_fds(local_fds, pipe_count * 2);
+ 
+-      chdir(wd);
++      {
++        int err = chdir(wd);
++        if (err) return err;
++      }
+       if (newEnviron == NULL)
+ 	execvp(commandLine[0], commandLine);
+       else
