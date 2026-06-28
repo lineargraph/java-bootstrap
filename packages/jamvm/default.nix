@@ -1,5 +1,4 @@
 {
-  breakpointHook,
   fetchurl,
   lib,
   zlib,

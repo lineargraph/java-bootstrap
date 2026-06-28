@@ -1,5 +1,4 @@
 {
-  fastjar,
   fetchurl,
   findutils,
   glib,
@@ -15,13 +14,12 @@ stdenv.mkDerivation (finalAttrs: {
   patches = [ ./classpath.patch ];
   buildInputs = [
     jikes
-    findutils
     glib
   ];
   nativeBuildInputs = [
     pkg-config
+    findutils
     zip
-    fastjar
   ];
   configureFlags = [
     "--disable-plugin"
