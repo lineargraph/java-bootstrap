@@ -1,0 +1,3 @@
+{
+  programs.nixfmt.enable = true;
+}
