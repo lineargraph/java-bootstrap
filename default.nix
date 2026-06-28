@@ -12,9 +12,11 @@ let
     in
     pkgs.callPackage f' ((builtins.intersectAttrs (lib.functionArgs f') autoArgs) // overrides);
   autoArgs = outputs // sources;
-  outputs = rec {
+  outputs = {
     shell = callPackage ./shell.nix { };
     treefmt-wrapper = callPackage ./treefmt-wrapper.nix { };
+    jikes = callPackage ./packages/jikes { };
+    inherit pkgs lib;
   };
 in
 outputs
