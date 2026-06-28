@@ -5,13 +5,15 @@
   zlib,
   stdenv,
   classpath,
-  jikes,
 }:
 stdenv.mkDerivation (finalAttrs: {
   name = "jamvm";
-  version = "2.0.0";
+  version = "1.5.1";
   nativeBuildInputs = [
     breakpointHook
+  ];
+  patches = [
+    ./jamvm.patch
   ];
   buildInputs = [
     zlib
@@ -23,11 +25,8 @@ stdenv.mkDerivation (finalAttrs: {
   ];
   src = fetchurl {
     url = "mirror://sourceforge/project/jamvm/jamvm/JamVM%20${finalAttrs.version}/jamvm-${finalAttrs.version}.tar.gz";
-    hash = "sha256-dkKOlt8K6d2WTHp8dMHpqDfi8xLDnpo1f6gXj37/gNo=";
+    hash = "sha256-ZjiVvWnK86H9pq9e6oJj2Qpf01yo9MMuIhCsQQeIkBo=";
   };
-  postInstall = ''
-    # ln -sf $BOOTCLASSPATH $out/lib/rt.jar
-  '';
   meta = {
     licenses = lib.licenses.gpl2Only;
   };

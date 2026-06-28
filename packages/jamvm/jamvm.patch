@@ -1,0 +1,21 @@
+--- a/src/class.c
++++ b/src/class.c
+@@ -1653,7 +1653,7 @@ char *getClassPath() {
+     return classpath;
+ }
+ 
+-int filter(struct dirent *entry) {
++int filter(const struct dirent *entry) {
+     int len = strlen(entry->d_name);
+     char *ext = &entry->d_name[len-4];
+ 
+--- a/src/os/linux/os.c
++++ b/src/os/linux/os.c
+@@ -19,6 +19,7 @@
+  * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+  */
+ 
++#define _GNU_SOURCE
+ #include <stdio.h>
+ #include <string.h>
+ #include <stdlib.h>
