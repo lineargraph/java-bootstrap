@@ -1,5 +1,4 @@
 {
-  breakpointHook,
   fastjar,
   fetchurl,
   findutils,
@@ -23,7 +22,6 @@ stdenv.mkDerivation (finalAttrs: {
     pkg-config
     zip
     fastjar
-    breakpointHook
   ];
   configureFlags = [
     "--disable-plugin"

@@ -16,7 +16,9 @@ stdenv.mkDerivation (finalAttrs: {
   src = ./.;
   buildPhase = ''
     jikes Main.java
-    zip ${finalAttrs.name}.jar *.class
+    mkdir META-INF
+    mv MANIFEST.MF META-INF
+    zip ${finalAttrs.name}.jar *.class META-INF/MANIFEST.MF
   '';
   installPhase = ''
     mkdir $out
