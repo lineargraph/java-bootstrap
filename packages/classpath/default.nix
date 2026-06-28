@@ -34,6 +34,10 @@ stdenv.mkDerivation (finalAttrs: {
     # "--disable-examples"
     # "--enable-Werror"
   ];
+  postInstall = ''
+    mkdir -p $out/nix-support
+    echo "export BOOTCLASSPATH=$out/share/classpath/glibj.zip" > $out/nix-support/setup-hook
+  '';
   src = fetchurl {
     url = "mirror://gnu/classpath/classpath-${finalAttrs.version}.tar.gz";
     hash = "sha256-3y0JNhKr0j/mfpQJ2JuyqOebFmT+Ky2kDhyO1pPjKUU=";

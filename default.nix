@@ -12,19 +12,24 @@ let
     in
     pkgs.callPackage f' ((builtins.intersectAttrs (lib.functionArgs f') autoArgs) // overrides);
   autoArgs = outputs // sources;
-  packages = lib.pipe ./packages [
-    builtins.readDir
-    lib.attrNames
-    (lib.map (name: {
-      inherit name;
-      value = callPackage "${./packages}/${name}" { };
-    }))
-    lib.listToAttrs
-  ];
+  loadDir =
+    dir:
+    lib.pipe dir [
+      builtins.readDir
+      lib.attrNames
+      (lib.map (name: {
+        inherit name;
+        value = callPackage "${dir}/${name}" { };
+      }))
+      lib.listToAttrs
+    ];
+  packages = loadDir ./packages;
+  tests = loadDir ./tests;
   outputs = {
     shell = callPackage ./shell.nix { };
     treefmt-wrapper = callPackage ./treefmt-wrapper.nix { };
     inherit pkgs lib packages;
+    checks = packages // tests;
   }
   // packages;
 in

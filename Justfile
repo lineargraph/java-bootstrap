@@ -1,5 +1,5 @@
 build-all:
-    nix-fast-build --file default.nix -A packages
+    nix-fast-build --file default.nix -A checks
 
 repl:
     nix repl --file default.nix
