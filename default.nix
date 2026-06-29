@@ -28,7 +28,12 @@ let
   outputs = {
     shell = callPackage ./shell.nix { };
     treefmt-wrapper = callPackage ./treefmt-wrapper.nix { };
-    inherit pkgs lib packages;
+    inherit
+      pkgs
+      lib
+      packages
+      tests
+      ;
     checks = packages // tests;
   }
   // packages;

@@ -1,6 +1,8 @@
 {
   lib,
   breakpointHook,
+  strace,
+  vim,
   fetchurl,
   stdenv,
   jikes,
@@ -16,14 +18,19 @@ stdenv.mkDerivation {
   nativeBuildInputs = [
     jamvm
     jikes
+  ]
+  ++ [
+    strace
     breakpointHook
+    vim
   ];
   buildInputs = [ jamvm ];
   JAVACMD = "${lib.getExe jamvm}";
   JAVAC = "${lib.getExe jikes}";
   ANT_OPTS = "-Dbuild.compiler=jikes -Djvm=jamvm";
   buildPhase = ''
-    ./build.sh -Ddist.dir=./dist dist
+    ./build.sh -Ddist.dir=./dist -Dbuild.compiler=jikes -Djvm=jamvm dist
+    exit 1
   '';
   installPhase = ''
     ANT_HOME=$out ./build.sh install

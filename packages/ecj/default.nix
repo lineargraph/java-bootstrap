@@ -1,7 +1,4 @@
 {
-  callPackage,
-  fetchurl,
-  classpath,
   breakpointHook,
   jikes,
   jamvm,
@@ -20,9 +17,6 @@ stdenv.mkDerivation {
     openjdk25
     ant-bootstrap
   ];
-  buildInputs = [
-    classpath
-  ];
 
   src = fetchFromGitHub {
     owner = "eclipse-jdt";
@@ -32,7 +26,6 @@ stdenv.mkDerivation {
   };
 
   buildPhase = ''
-
     cd org.eclipse.jdt.core/scripts
     ant -f buildExtraJars.xml -Dbuild.compiler=jikes -Djvm=jamvm build
   '';

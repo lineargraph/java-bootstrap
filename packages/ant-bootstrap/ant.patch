@@ -1,5 +1,14 @@
 --- a/build.xml
 +++ b/build.xml
+@@ -518,7 +518,7 @@
+       classname="com.jcraft.jsch.Session"
+       classpathref="classpath" ignoresystemclasses="${ignoresystemclasses}"/>
+ 
+-    <property name="build.compiler" value="modern"/>
++    <property name="build.compiler" value="jikes"/>
+ 
+     <!--check for XSD support in the parser-->
+     <condition property="xmlschema.present">
 @@ -883,8 +883,9 @@
           Create the essential distribution that can run Apache Ant
         ===================================================================
