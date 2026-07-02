@@ -5,12 +5,7 @@ let
   sources = import ./sources.nix { inherit system; };
   pkgs = sources.pkgs;
   lib = pkgs.lib;
-  callPackage =
-    f: overrides:
-    let
-      f' = if lib.isFunction f then f else import f;
-    in
-    pkgs.callPackage f' ((builtins.intersectAttrs (lib.functionArgs f') autoArgs) // overrides);
+  callPackage = lib.callPackageWith (pkgs // autoArgs);
   autoArgs = outputs // sources;
   loadDir =
     dir:
@@ -23,7 +18,10 @@ let
       }))
       lib.listToAttrs
     ];
-  packages = loadDir ./packages;
+  packages = lib.filesystem.packagesFromDirectoryRecursive {
+    inherit callPackage;
+    directory = ./packages;
+  };
   tests = loadDir ./tests;
   outputs = {
     shell = callPackage ./shell.nix { };

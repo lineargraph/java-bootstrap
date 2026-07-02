@@ -14,7 +14,7 @@ stdenv.mkDerivation {
     jikes
     breakpointHook
     jamvm
-    openjdk25
+    # openjdk25
     ant-bootstrap
   ];
 
