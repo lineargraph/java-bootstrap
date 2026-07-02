@@ -1,4 +1,5 @@
 {
+  strace,
   hello,
   zip,
   stdenv,
@@ -16,6 +17,7 @@ stdenv.mkDerivation {
   checkInputs = [
     jamvm
     hello
+    strace
   ];
   buildPhase = ''
     mkdir dist
@@ -32,7 +34,7 @@ stdenv.mkDerivation {
   checkPhase = ''
     for test in *Test.java; do
       echo Running $test
-      jamvm -cp tests.jar ''${test%.*}
+      strace -f -e '!rt_sigprocmask' jamvm -cp tests.jar ''${test%.*}
     done
   '';
   doCheck = true;
