@@ -34,7 +34,7 @@ stdenv.mkDerivation {
   checkPhase = ''
     for test in *Test.java; do
       echo Running $test
-      strace -f -e '!rt_sigprocmask' jamvm -cp tests.jar ''${test%.*}
+      jamvm -cp tests.jar ''${test%.*}
     done
   '';
   doCheck = true;

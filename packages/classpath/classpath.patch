@@ -71,18 +71,30 @@
  JNIEXPORT int cpio_isFileExists (const char *filename);
 --- a/native/jni/native-lib/cpproc.c
 +++ b/native/jni/native-lib/cpproc.c
-@@ -86,7 +86,10 @@ int cpproc_forkAndExec (char * const *commandLine, char * const * newEnviron,
+@@ -86,12 +86,18 @@ int cpproc_forkAndExec (char * const *commandLine, char * const * newEnviron,
  
        close_all_fds(local_fds, pipe_count * 2);
  
 -      chdir(wd);
-+      {
+-      if (newEnviron == NULL)
+-	execvp(commandLine[0], commandLine);
+-      else
++      if (wd != NULL) {
 +        int err = chdir(wd);
-+        if (err) return err;
++        if (err) _exit(errno);
 +      }
-       if (newEnviron == NULL)
- 	execvp(commandLine[0], commandLine);
-       else
++      int err = (newEnviron == NULL) ?
++	execvp(commandLine[0], commandLine)
++      :
+ 	execve(commandLine[0], commandLine, newEnviron);
+-      
++
++      if (err)
++        _exit (errno);
++
+       abort();
+       
+       break;
 --- a/vm/reference/java/lang/VMProcess.java
 +++ b/vm/reference/java/lang/VMProcess.java
 @@ -200,6 +200,7 @@ final class VMProcess extends Process

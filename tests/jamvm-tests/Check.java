@@ -8,6 +8,14 @@ public class Check {
         if (!cond) failed = true;
     }
 
+    public static void eq(String label, int expected, int actual) {
+        eq(label, Integer.valueOf(expected), Integer.valueOf(actual));
+    }
+
+    public static void eq(String label, Object expected, Object actual) {
+        that(label + " == " + expected + " (got " + actual + ")", expected == null ? actual == null : expected.equals(actual));
+    }
+
     // Print the machine-readable verdict the runner greps for, and exit
     // with a matching code so a crash vs. a clean fail are distinguishable.
     public static void done(String name) {

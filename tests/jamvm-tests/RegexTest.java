@@ -14,7 +14,7 @@ public class RegexTest {
         boolean matched = m.matches();
         Check.that("pom pattern matches", matched);
         if (matched) {
-            Check.that("group(1) == 'etc/poms/x'", "etc/poms/x".equals(m.group(1)));
+            Check.eq("group(1)", "etc/poms/x", m.group(1));
         }
         Check.done("RegexTest");
     }
