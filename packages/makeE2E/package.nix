@@ -11,6 +11,7 @@
   languageVersion,
   virtualMachine,
   includej5 ? lib.compareVersions languageVersion "1.5" >= 0,
+  includej6 ? lib.compareVersions languageVersion "1.6" >= 0,
 }:
 let
   filter =

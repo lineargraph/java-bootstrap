@@ -1,6 +1,8 @@
 {
   jikes,
+  openjdk8_headless,
   jamvm,
+  makeE2E,
   stdenv,
   ant-bootstrap,
   fetchFromGitHub,
@@ -157,12 +159,19 @@ let
         patches = [
           ./ecj33.patch
         ];
-        srcJdr = fetchFromGitHub {
+        srcJdt = fetchFromGitHub {
           name = "eclipse-jdt";
           owner = "eclipse-jdt";
           repo = "eclipse.jdt.core";
           rev = "R3_3";
           hash = "sha256-6bbi/IqI8LaW0CfF6nTDTZDD56zWNSGV6b4PBVyCtac=";
+        };
+        passthru.tests = {
+          "ecj-1.6" = makeE2E {
+            languageVersion = "1.6";
+            virtualMachine = openjdk8_headless;
+            compiler = final.finalPackage;
+          };
         };
       }
     );
