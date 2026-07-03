@@ -8,9 +8,10 @@
   xmlstarlet,
   moreutils,
   bash,
+  lib,
 }:
 let
-  ecjLibs = stdenv.mkDerivation (finalAttrs: {
+  ecjLibsJDK_1_5 = stdenv.mkDerivation (finalAttrs: {
     pname = "ecj-libs";
     version = "JDK_1_5";
     nativeBuildInputs = [
@@ -28,7 +29,7 @@ let
         repo = "eclipse.jdt.core";
         rev = "f3fb33fde9b5fd8fd3021a7432912bb6fbeb17c7"; # JDK_1_5
         hash = "sha256-X6ACLma4sbBLNwi221CV3hG7lDIHD9FaArGK7ybWQD0=";
-        #        rev = "v_382a"; # JDK_1_5
+        #        rev = "v_382a";
         #        hash = "sha256-Kdes4eso3DIfDjblJ60nfg+Vyj9Gmh7F7AkHQqDcex0=";
       })
       (fetchFromGitHub {
@@ -70,44 +71,12 @@ let
       ./ecj.patch
     ];
     sourceRoot = "ecj-source";
-    unpackPhase = ''
-      runHook preUnpack
-
-      mkdir ${finalAttrs.sourceRoot}
-
-      for _src in $srcs; do
-        if [[ -d "$_src"/bundles ]]; then
-          cp -r "$_src"/bundles/* ${finalAttrs.sourceRoot}
-        else
-          cp -r "$_src"/* ${finalAttrs.sourceRoot}
-        fi
-      done
-
-      chmod -R u+w ${finalAttrs.sourceRoot}
-
-      cp ${./services-classpath.xml} ${finalAttrs.sourceRoot}/org.eclipse.osgi.services/.classpath
-      mkdir ${finalAttrs.sourceRoot}/org.eclipse.osgi.services/src
-      (
-        cd ${finalAttrs.sourceRoot}/org.eclipse.osgi.services/src
-        unzip ../servicessrc.zip
-        rm -rf org/osgi/service/{jini,io,http}
-      )
-
-      cp ${./services-classpath.xml} ${finalAttrs.sourceRoot}/org.eclipse.osgi.util/.classpath
-      mkdir ${finalAttrs.sourceRoot}/org.eclipse.osgi.util/src
-      (
-        cd ${finalAttrs.sourceRoot}/org.eclipse.osgi.util/src
-        unzip ../utilsrc.zip
-      )
-
-      IFS=$'\n'
-      for srcFile in $(find . -type f -name '*.java'); do
-        # Can i avoid iconv'ing _everything_?
-        (iconv -f cp1250 -t utf8 "$srcFile" || continue) | sponge "$srcFile"
-      done
-
-      runHook postUnpack
-    '';
+    zippedSourceProjects = [
+      "org.eclipse.osgi.services"
+      "org.eclipse.osgi.util"
+    ];
+    zippedSourceProjectsStr = lib.strings.join " " finalAttrs.zippedSourceProjects;
+    unpackPhase = builtins.readFile ./unpacker.sh;
     JAVACMD = "${jamvm}/bin/jamvm";
     configurePhase = ''
       runHook preConfigure
@@ -125,7 +94,6 @@ let
         fi
       done
       cat ${./footer.xml} >> build.xml
-
 
       runHook postConfigure
     '';
@@ -153,5 +121,6 @@ let
       mainProgram = "ecj";
     };
   });
+  ecjLibs = ecjLibsJDK_1_5.overrideAttrs (final: prev: { });
 in
-ecjLibs
+ecjLibsJDK_1_5
