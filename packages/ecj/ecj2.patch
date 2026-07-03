@@ -1,11 +1,387 @@
+--- a/org.eclipse.core.resources/src/org/eclipse/core/internal/resources/SaveManager.java
++++ b/org.eclipse.core.resources/src/org/eclipse/core/internal/resources/SaveManager.java
+@@ -437,8 +437,8 @@ public class SaveManager implements IElementInfoFlattener, IManager {
+ 		List valuables = new ArrayList(10);
+ 		IPath location = workspace.getMetaArea().getSafeTableLocationFor(ResourcesPlugin.PI_RESOURCES);
+ 		valuables.add(location.lastSegment()); // add master table
+-		for (Enumeration enum = masterTable.keys(); enum.hasMoreElements();) {
+-			String key = (String) enum.nextElement();
++		for (Enumeration $enum = masterTable.keys(); $enum.hasMoreElements();) {
++			String key = (String) $enum.nextElement();
+ 			if (key.startsWith(SAVE_NUMBER_PREFIX)) {
+ 				String pluginId = key.substring(SAVE_NUMBER_PREFIX.length());
+ 				valuables.add(workspace.getMetaArea().getSafeTableLocationFor(pluginId).lastSegment());
+--- a/org.eclipse.core.resources/src/org/eclipse/core/internal/resources/XMLWriter.java
++++ b/org.eclipse.core.resources/src/org/eclipse/core/internal/resources/XMLWriter.java
+@@ -55,9 +55,9 @@ public class XMLWriter extends PrintWriter {
+ 		sb.append("<"); //$NON-NLS-1$
+ 		sb.append(name);
+ 		if (parameters != null)
+-			for (Enumeration enum = Collections.enumeration(parameters.keySet()); enum.hasMoreElements();) {
++			for (Enumeration $enum = Collections.enumeration(parameters.keySet()); $enum.hasMoreElements();) {
+ 				sb.append(" "); //$NON-NLS-1$
+-				String key = (String) enum.nextElement();
++				String key = (String) $enum.nextElement();
+ 				sb.append(key);
+ 				sb.append("=\""); //$NON-NLS-1$
+ 				sb.append(getEscaped(String.valueOf(parameters.get(key))));
+--- a/org.eclipse.core.resources/src/org/eclipse/core/internal/utils/Queue.java
++++ b/org.eclipse.core.resources/src/org/eclipse/core/internal/utils/Queue.java
+@@ -203,11 +203,11 @@ public class Queue {
+ 	public String toString() {
+ 		StringBuffer sb = new StringBuffer();
+ 		sb.append("["); //$NON-NLS-1$
+-		Enumeration enum = elements();
++		Enumeration $enum = elements();
+ 		if (!isEmpty()) {
+ 			while (true) {
+-				sb.append(enum.nextElement());
+-				if (enum.hasMoreElements())
++				sb.append($enum.nextElement());
++				if ($enum.hasMoreElements())
+ 					sb.append(", "); //$NON-NLS-1$
+ 				else
+ 					break;
 --- a/org.eclipse.core.runtime/src/org/eclipse/core/internal/registry/ExtensionRegistry.java
 +++ b/org.eclipse.core.runtime/src/org/eclipse/core/internal/registry/ExtensionRegistry.java
 @@ -49,7 +49,7 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
  		public IStatus run(IProgressMonitor monitor) {
- 			MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, IStatus.OK, Policy.bind("plugin.eventListenerError"), null); //$NON-NLS-1$
+ 			MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, IStatus.OK, Policy.bind("plugin.eventListenerError"), null); //$NON-NLS-1$			
  			for (int i = 0; i < listenerInfos.length; i++) {
 -				ListenerInfo listenerInfo = (ListenerInfo) listenerInfos[i];
 +                ExtensionRegistry.ListenerInfo listenerInfo = (ExtensionRegistry.ListenerInfo) listenerInfos[i];
  				if (listenerInfo.filter != null && !deltas.containsKey(listenerInfo.filter))
  					continue;
  				try {
+--- a/org.eclipse.core.runtime.compatibility/.classpath
++++ b/org.eclipse.core.runtime.compatibility/.classpath
+@@ -1,6 +1,5 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <classpath>
+-	<classpathentry kind="src" path="src-boot"/>
+ 	<classpathentry kind="src" path="src-runtime"/>
+ 	<classpathentry kind="src" path="src-model"/>
+ 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+--- a/org.eclipse.jdt.core/compiler/org/eclipse/jdt/internal/compiler/CompilationResult.java
++++ b/org.eclipse.jdt.core/compiler/org/eclipse/jdt/internal/compiler/CompilationResult.java
+@@ -167,11 +167,11 @@ public class CompilationResult {
+ 	}
+ 	
+ 	public ClassFile[] getClassFiles() {
+-		Enumeration enum = compiledTypes.elements();
++		Enumeration $enum = compiledTypes.elements();
+ 		ClassFile[] classFiles = new ClassFile[compiledTypes.size()];
+ 		int index = 0;
+-		while (enum.hasMoreElements()){
+-			classFiles[index++] = (ClassFile)enum.nextElement();
++		while ($enum.hasMoreElements()) {
++			classFiles[index++] = (ClassFile)$enum.nextElement();
+ 		}
+ 		return classFiles;	
+ 	}
+--- a/org.eclipse.jdt.core/compiler/org/eclipse/jdt/internal/compiler/lookup/SourceTypeBinding.java
++++ b/org.eclipse.jdt.core/compiler/org/eclipse/jdt/internal/compiler/lookup/SourceTypeBinding.java
+@@ -1049,9 +1049,9 @@ public FieldBinding getSyntheticField(ReferenceBinding targetEnclosingType, bool
+ 	// class T { class M{}}
+ 	// class S extends T { class N extends M {}} --> need to use S as a default enclosing instance for the super constructor call in N().
+ 	if (!onlyExactMatch){
+-		Enumeration enum = synthetics[FIELD_EMUL].elements();
+-		while (enum.hasMoreElements()) {
+-			field = (FieldBinding) enum.nextElement();
++		Enumeration $enum = synthetics[FIELD_EMUL].elements();
++		while ($enum.hasMoreElements()) {
++			field = (FieldBinding) $enum.nextElement();
+ 			if (CharOperation.prefixEquals(SyntheticArgumentBinding.EnclosingInstancePrefix, field.name)
+ 				&& targetEnclosingType.isSuperclassOf((ReferenceBinding) field.type))
+ 					return field;
+--- a/org.eclipse.jdt.core/model/org/eclipse/jdt/internal/core/CopyResourceElementsOperation.java
++++ b/org.eclipse.jdt.core/model/org/eclipse/jdt/internal/core/CopyResourceElementsOperation.java
+@@ -552,9 +552,9 @@ public class CopyResourceElementsOperation extends MultiOperation implements Suf
+ 	private void updatePackageStatement(IDOMCompilationUnit domCU, String pkgName) {
+ 		boolean defaultPackage = pkgName.equals(IPackageFragment.DEFAULT_PACKAGE_NAME);
+ 		boolean seenPackageNode = false;
+-		Enumeration enum = domCU.getChildren();
+-		while (enum.hasMoreElements()) {
+-			IDOMNode node = (IDOMNode) enum.nextElement();
++		Enumeration $enum = domCU.getChildren();
++		while ($enum.hasMoreElements()) {
++			IDOMNode node = (IDOMNode) $enum.nextElement();
+ 			if (node.getNodeType() == IDOMNode.PACKAGE) {
+ 				if (! defaultPackage) {
+ 					node.setName(pkgName);
+--- a/org.eclipse.jdt.core/model/org/eclipse/jdt/internal/core/XMLWriter.java
++++ b/org.eclipse.jdt.core/model/org/eclipse/jdt/internal/core/XMLWriter.java
+@@ -72,9 +72,9 @@ class XMLWriter extends PrintWriter {
+ 		sb.append("<"); //$NON-NLS-1$
+ 		sb.append(name);
+ 		if (parameters != null) {
+-			for (Enumeration enum= Collections.enumeration(parameters.keySet()); enum.hasMoreElements();) {
++			for (Enumeration $enum= Collections.enumeration(parameters.keySet()); $enum.hasMoreElements();) {
+ 				sb.append(" "); //$NON-NLS-1$
+-				String key= (String) enum.nextElement();
++				String key= (String) $enum.nextElement();
+ 				sb.append(key);
+ 				sb.append("=\""); //$NON-NLS-1$
+ 				sb.append(getEscaped(String.valueOf(parameters.get(key))));
+--- a/org.eclipse.jdt.core.tests.compiler/src/org/eclipse/jdt/core/tests/runtime/LocalVMLauncher.java
++++ b/org.eclipse.jdt.core.tests.compiler/src/org/eclipse/jdt/core/tests/runtime/LocalVMLauncher.java
+@@ -217,9 +217,9 @@ public String getProgramClass() {
+ public LocalVirtualMachine[] getRunningVirtualMachines() {
+ 	// Select the VMs that are actually running
+ 	Vector actuallyRunning = new Vector();
+-	Enumeration enum = this.runningVMs.elements();
+-	while (enum.hasMoreElements()) {
+-		LocalVirtualMachine vm = (LocalVirtualMachine)enum.nextElement();
++	Enumeration $enum = this.runningVMs.elements();
++	while ($enum.hasMoreElements()) {
++		LocalVirtualMachine vm = (LocalVirtualMachine)$enum.nextElement();
+ 		if (vm.isRunning())
+ 			actuallyRunning.addElement(vm);
+ 	}
+--- a/org.eclipse.osgi/console/src/org/eclipse/osgi/framework/internal/core/FrameworkCommandInterpreter.java
++++ b/org.eclipse.osgi/console/src/org/eclipse/osgi/framework/internal/core/FrameworkCommandInterpreter.java
+@@ -299,10 +299,10 @@ public class FrameworkCommandInterpreter implements CommandInterpreter {
+ 
+ 		int count = dic.size();
+ 		String[] keys = new String[count];
+-		Enumeration enum = dic.keys();
++		Enumeration $enum = dic.keys();
+ 		int i = 0;
+-		while (enum.hasMoreElements()) {
+-			keys[i++] = (String) enum.nextElement();
++		while ($enum.hasMoreElements()) {
++			keys[i++] = (String) $enum.nextElement();
+ 		}
+ 		Util.sort(keys);
+ 
+--- a/org.eclipse.osgi/core/adaptor/org/eclipse/osgi/framework/util/Headers.java
++++ b/org.eclipse.osgi/core/adaptor/org/eclipse/osgi/framework/util/Headers.java
+@@ -63,10 +63,10 @@ public class Headers extends Dictionary {
+ 		this.values = values;
+ 
+ 		/* initialize headers dictionary */
+-		Enumeration enum = values.keys();
++		Enumeration $enum = values.keys();
+ 
+-		while (enum.hasMoreElements()) {
+-			Object key = enum.nextElement();
++		while ($enum.hasMoreElements()) {
++			Object key = $enum.nextElement();
+ 
+ 			if (key instanceof String) {
+ 				String header = ((String) key).toLowerCase();
+--- a/org.eclipse.osgi/core/framework/org/eclipse/osgi/framework/internal/core/BundleCombinedPermissions.java
++++ b/org.eclipse.osgi/core/framework/org/eclipse/osgi/framework/internal/core/BundleCombinedPermissions.java
+@@ -95,8 +95,8 @@ final class BundleCombinedPermissions extends BundlePermissionCollection {
+ 			 */
+ 			public boolean hasMoreElements() {
+ 				while (i < enums.length) {
+-					Enumeration enum = enums[i];
+-					if ((enum != null) && enum.hasMoreElements()) {
++					Enumeration $enum = enums[i];
++					if (($enum != null) && $enum.hasMoreElements()) {
+ 						return true;
+ 					}
+ 
+@@ -118,9 +118,9 @@ final class BundleCombinedPermissions extends BundlePermissionCollection {
+ 			public Object nextElement() {
+ 				while (i < enums.length) {
+ 					try {
+-						Enumeration enum = enums[i];
+-						if (enum != null) {
+-							return enum.nextElement();
++						Enumeration $enum = enums[i];
++						if ($enum != null) {
++							return $enum.nextElement();
+ 						}
+ 					} catch (NoSuchElementException e) {
+ 					}
+--- a/org.eclipse.osgi/core/framework/org/eclipse/osgi/framework/internal/core/BundleContextImpl.java
++++ b/org.eclipse.osgi/core/framework/org/eclipse/osgi/framework/internal/core/BundleContextImpl.java
+@@ -136,9 +136,9 @@ public class BundleContextImpl implements BundleContext, EventDispatcher {
+ 
+ 					usedRefs = new ServiceReference[usedSize];
+ 
+-					Enumeration enum = servicesInUse.keys();
++					Enumeration $enum = servicesInUse.keys();
+ 					for (int i = 0; i < usedSize; i++) {
+-						usedRefs[i] = (ServiceReference) enum.nextElement();
++						usedRefs[i] = (ServiceReference) $enum.nextElement();
+ 					}
+ 				}
+ 			}
+@@ -1094,10 +1094,10 @@ public class BundleContextImpl implements BundleContext, EventDispatcher {
+ 			ServiceReferenceImpl[] references = new ServiceReferenceImpl[size];
+ 			int refcount = 0;
+ 
+-			Enumeration enum = servicesInUse.keys();
++			Enumeration $enum = servicesInUse.keys();
+ 
+ 			for (int i = 0; i < size; i++) {
+-				ServiceReferenceImpl reference = (ServiceReferenceImpl) enum.nextElement();
++				ServiceReferenceImpl reference = (ServiceReferenceImpl) $enum.nextElement();
+ 
+ 				try {
+ 					framework.checkGetServicePermission(reference.registration.clazzes);
+--- a/org.eclipse.osgi/core/framework/org/eclipse/osgi/framework/internal/core/BundlePermissions.java
++++ b/org.eclipse.osgi/core/framework/org/eclipse/osgi/framework/internal/core/BundlePermissions.java
+@@ -185,10 +185,10 @@ final class BundlePermissions extends BundlePermissionCollection {
+ 					return null;
+ 				}
+ 
+-				Enumeration enum = permissions.elements();
++				Enumeration $enum = permissions.elements();
+ 
+-				while (enum.hasMoreElements()) {
+-					Permission resolved = ((UnresolvedPermission) enum.nextElement()).resolve(clazz);
++				while ($enum.hasMoreElements()) {
++					Permission resolved = ((UnresolvedPermission) $enum.nextElement()).resolve(clazz);
+ 
+ 					if (resolved != null) {
+ 						if (collection == null) {
+@@ -260,10 +260,11 @@ final class BundlePermissions extends BundlePermissionCollection {
+ 			int size = collections.size();
+ 
+ 			Class[] clazzes = new Class[size];
+-			Enumeration enum = collections.keys();
++
++			Enumeration $enum = collections.keys();
+ 
+ 			for (int i = 0; i < size; i++) {
+-				clazzes[i] = (Class) enum.nextElement();
++				clazzes[i] = (Class) $enum.nextElement();
+ 			}
+ 
+ 			for (int i = 0; i < size; i++) {
+--- a/org.eclipse.osgi/core/framework/org/eclipse/osgi/framework/internal/core/Framework.java
++++ b/org.eclipse.osgi/core/framework/org/eclipse/osgi/framework/internal/core/Framework.java
+@@ -261,9 +261,9 @@ public class Framework implements EventDispatcher, EventPublisher {
+ 	 */
+ 	protected void initializeProperties(Properties adaptorProperties) {
+ 		properties = System.getProperties();
+-		Enumeration enum = adaptorProperties.propertyNames();
+-		while (enum.hasMoreElements()) {
+-			String key = (String) enum.nextElement();
++		Enumeration $enum = adaptorProperties.propertyNames();
++		while ($enum.hasMoreElements()) {
++			String key = (String) $enum.nextElement();
+ 			if (properties.getProperty(key) == null) {
+ 				properties.put(key, adaptorProperties.getProperty(key));
+ 			}
+--- a/org.eclipse.osgi/core/framework/org/eclipse/osgi/framework/internal/core/PermissionsHash.java
++++ b/org.eclipse.osgi/core/framework/org/eclipse/osgi/framework/internal/core/PermissionsHash.java
+@@ -90,10 +90,10 @@ class PermissionsHash extends PermissionCollection {
+ 			return true;
+ 		}
+ 
+-		Enumeration enum = elements();
++		Enumeration $enum = elements();
+ 
+-		while (enum.hasMoreElements()) {
+-			if (((Permission) enum.nextElement()).implies(perm)) {
++		while ($enum.hasMoreElements()) {
++			if (((Permission) $enum.nextElement()).implies(perm)) {
+ 				return true;
+ 			}
+ 		}
+--- a/org.eclipse.osgi/core/framework/org/eclipse/osgi/framework/internal/core/ServiceRegistrationImpl.java
++++ b/org.eclipse.osgi/core/framework/org/eclipse/osgi/framework/internal/core/ServiceRegistrationImpl.java
+@@ -495,10 +495,10 @@ public class ServiceRegistrationImpl implements ServiceRegistration {
+ 
+ 			if (props != null) {
+ 				synchronized (props) {
+-					Enumeration enum = props.keys();
++					Enumeration $enum = props.keys();
+ 
+-					while (enum.hasMoreElements()) {
+-						Object key = enum.nextElement();
++					while ($enum.hasMoreElements()) {
++						Object key = $enum.nextElement();
+ 
+ 						if (key instanceof String) {
+ 							String header = (String) key;
+@@ -540,10 +540,10 @@ public class ServiceRegistrationImpl implements ServiceRegistration {
+ 
+ 			String[] keynames = new String[size];
+ 
+-			Enumeration enum = keys();
++			Enumeration $enum = keys();
+ 
+ 			for (int i = 0; i < size; i++) {
+-				keynames[i] = (String) enum.nextElement();
++				keynames[i] = (String) $enum.nextElement();
+ 			}
+ 
+ 			return (keynames);
+--- a/org.eclipse.osgi/defaultAdaptor/src/org/eclipse/osgi/framework/internal/defaultadaptor/DefaultPermissionStorage.java
++++ b/org.eclipse.osgi/defaultAdaptor/src/org/eclipse/osgi/framework/internal/defaultadaptor/DefaultPermissionStorage.java
+@@ -80,10 +80,10 @@ class DefaultPermissionStorage implements PermissionStorage {
+ 
+ 		String[] locations = new String[size];
+ 
+-		Enumeration enum = permissionFiles.keys();
++		Enumeration $enum = permissionFiles.keys();
+ 
+ 		for (int i = 0; i < size; i++) {
+-			locations[i] = (String) enum.nextElement();
++			locations[i] = (String) $enum.nextElement();
+ 		}
+ 
+ 		return locations;
+--- a/org.eclipse.osgi/eclipseAdaptor/src/org/eclipse/core/runtime/adaptor/EclipseBundleData.java
++++ b/org.eclipse.osgi/eclipseAdaptor/src/org/eclipse/core/runtime/adaptor/EclipseBundleData.java
+@@ -236,9 +236,9 @@ public class EclipseBundleData extends DefaultBundleData {
+ 
+ 		//merge the original manifest with the generated one
+ 		if (originalManifest != null) {
+-			Enumeration enum = originalManifest.keys();
+-			while (enum.hasMoreElements()) {
+-				Object key = enum.nextElement();
++			Enumeration $enum = originalManifest.keys();
++			while ($enum.hasMoreElements()) {
++				Object key = $enum.nextElement();
+ 				generatedManifest.put(key, originalManifest.get(key));
+ 			}
+ 		}
+--- a/org.eclipse.osgi/eclipseAdaptor/src/org/eclipse/core/runtime/adaptor/PluginConverterImpl.java
++++ b/org.eclipse.osgi/eclipseAdaptor/src/org/eclipse/core/runtime/adaptor/PluginConverterImpl.java
+@@ -488,8 +488,8 @@ public class PluginConverterImpl implements PluginConverter {
+ 			return names;
+ 		}
+ 		//Run through the entries
+-		for (Enumeration enum = file.entries(); enum.hasMoreElements();) {
+-			JarEntry entry = (JarEntry) enum.nextElement();
++		for (Enumeration $enum = file.entries(); $enum.hasMoreElements();) {
++			JarEntry entry = (JarEntry) $enum.nextElement();
+ 			String name = entry.getName();
+ 			if (!isValidPackageName(name))
+ 				continue;
+--- a/org.eclipse.osgi/eclipseAdaptor/src/org/eclipse/osgi/framework/stats/ResourceBundleStats.java
++++ b/org.eclipse.osgi/eclipseAdaptor/src/org/eclipse/osgi/framework/stats/ResourceBundleStats.java
+@@ -53,8 +53,8 @@ public class ResourceBundleStats {
+ 	 * Compute the size of bundle
+ 	 */
+ 	private void initialize(ResourceBundle bundle) {
+-		for (Enumeration enum = bundle.getKeys(); enum.hasMoreElements();) {
+-			String key = (String) enum.nextElement();
++		for (Enumeration $enum = bundle.getKeys(); $enum.hasMoreElements();) {
++			String key = (String) $enum.nextElement();
+ 			keySize += sizeOf(key);
+ 			valueSize += sizeOf(bundle.getString(key));
+ 			keyCount++;
+--- a/org.eclipse.osgi/osgi/src/org/osgi/util/tracker/ServiceTracker.java
++++ b/org.eclipse.osgi/osgi/src/org/osgi/util/tracker/ServiceTracker.java
+@@ -472,11 +472,11 @@ public class ServiceTracker implements ServiceTrackerCustomizer
+ 
+             ServiceReference references[] = new ServiceReference[length];
+ 
+-            Enumeration enum = tracked.keys();
++            Enumeration $enum = tracked.keys();
+ 
+             for (int i = 0; i < length; i++)
+             {
+-                references[i] = (ServiceReference)enum.nextElement();
++                references[i] = (ServiceReference)$enum.nextElement();
+             }
+ 
+             return references;

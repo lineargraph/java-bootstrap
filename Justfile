@@ -31,4 +31,4 @@ clean:
     )
 
 @formatPatch attr *filters:
-    git diff --no-relative -p --no-index patch-{{attr}}/backup/ patch-{{attr}}/modified/ ':!*.orig' {{filters}} | sed -E -e '/index.*/d' -e '/diff.*/d' -e 's|([ab])/[^/]*/[^/]*|\1|'
+    git diff --no-relative -p --no-index patch-{{attr}}/backup/ patch-{{attr}}/modified/ ':!*.orig' {{filters}} | sed -E -e '/^index.*/d' -e '/^diff.*/d' -e 's|([ab])/[^/]*/[^/]*|\1|'
