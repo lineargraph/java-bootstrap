@@ -32,17 +32,6 @@
  	<classpathentry kind="src" path="src-runtime"/>
  	<classpathentry kind="src" path="src-model"/>
  	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
---- a/org.eclipse.jdt.core/.classpath
-+++ b/org.eclipse.jdt.core/.classpath
-@@ -1,6 +1,8 @@
- <?xml version="1.0" encoding="UTF-8"?>
- <classpath>
-+    <!--
- 	<classpathentry output="antbin" kind="src" path="antadapter"/>
-+	-->
- 	<classpathentry kind="src" path="batch"/>
- 	<classpathentry kind="src" path="codeassist"/>
- 	<classpathentry kind="src" path="compiler"/>
 --- a/org.eclipse.jdt.core/.project
 +++ b/org.eclipse.jdt.core/.project
 @@ -4,6 +4,9 @@

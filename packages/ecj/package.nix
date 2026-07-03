@@ -28,6 +28,8 @@ let
         repo = "eclipse.jdt.core";
         rev = "f3fb33fde9b5fd8fd3021a7432912bb6fbeb17c7"; # JDK_1_5
         hash = "sha256-X6ACLma4sbBLNwi221CV3hG7lDIHD9FaArGK7ybWQD0=";
+        #        rev = "v_382a"; # JDK_1_5
+        #        hash = "sha256-Kdes4eso3DIfDjblJ60nfg+Vyj9Gmh7F7AkHQqDcex0=";
       })
       (fetchFromGitHub {
         name = "eclipse-platform-resources";
@@ -113,7 +115,7 @@ let
       cat ${./header.xml} > build.xml
       for project in org.eclipse.* org.osgi.*; do
         if [[ -f "$project"/.classpath ]]; then
-          classpath="$((xmlstarlet sel -t -v "//classpathentry[@kind='src']/@path" "$project"/.classpath || true) \
+          classpath="$((xmlstarlet sel -t -v "//*[@kind='src' and not(@output) and not(starts-with(@path, '/'))]/@path" "$project"/.classpath || true) \
             | sed 's|.*|''${base}@PROJECT@/\0|' | tr '\n' :)"
           files="$(echo "$classpath" | tr : '\n' |
             sed 's|.*|<fileset dir="\0"><include name="**/*.rsc"/><include name="**/*.properties"/></fileset>|g' | tr '\n' ' ')"
@@ -139,32 +141,17 @@ let
 
       mkdir $out
       cp -r build/lib $out
+      mkdir $out/bin
+      echo '#!${bash}/bin/bash' >> $out/bin/ecj
+      echo "${jamvm}/bin/jamvm -cp '$(find $out/lib/ | xargs | tr ' ' ':')' org.eclipse.jdt.internal.compiler.batch.Main" '"$@"' >> $out/bin/ecj
+      chmod +x $out/bin/ecj
 
       runHook postInstall
     '';
     meta = {
       description = "The Eclipse Java Compiler";
+      mainProgram = "ecj";
     };
   });
 in
-stdenv.mkDerivation {
-  pname = "ecj";
-  version = "JDK_1_5";
-  buildInputs = [
-    ecjLibs
-    jamvm
-  ];
-  passthru.unwrapped = ecjLibs;
-  src = ./.;
-  installPhase = ''
-    mkdir $out
-    ln -s ${ecjLibs}/lib $out
-    mkdir $out/bin
-    echo '#!${bash}/bin/bash' >> $out/bin/ecj
-    echo "${jamvm}/bin/jamvm -cp '$(find $out/lib/ | xargs | tr ' ' ':')' org.eclipse.jdt.internal.compiler.batch.Main" '"$@"' >> $out/bin/ecj
-    chmod +x $out/bin/ecj
-  '';
-  meta = ecjLibs.meta // {
-    mainProgram = "ecj";
-  };
-}
+ecjLibs
