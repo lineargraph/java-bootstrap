@@ -30,7 +30,6 @@ stdenv.mkDerivation {
   ANT_OPTS = "-Dbuild.compiler=jikes -Djvm=jamvm";
   buildPhase = ''
     ./build.sh -Ddist.dir=./dist -Dbuild.compiler=jikes -Djvm=jamvm dist
-    exit 1
   '';
   installPhase = ''
     ANT_HOME=$out ./build.sh install

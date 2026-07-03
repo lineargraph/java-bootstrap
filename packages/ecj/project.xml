@@ -1,0 +1,32 @@
+    <target name="@PROJECT@" depends="@DEPENDENCIES@">
+        <property name="projectname" value="@PROJECT@"/>
+        <echo message="compiling sources -> .class (jikes)"/>
+        <mkdir dir="${work}@PROJECT@/"/>
+
+        <javac srcdir="@CLASSPATH@"
+               destdir="${work}@PROJECT@/"
+               compiler="jikes"
+               executable="${jikes.path}"
+               encoding="${encoding}"
+               source="${source}"
+               target="${target}"
+               includeantruntime="false"
+               debug="true">
+            <classpath refid="classpath"/>
+        </javac>
+
+        <echo message="copying resources -> ${work}"/>
+        <copy todir="${work}@PROJECT@/">
+            <fileset dir="${base}@PROJECT@/">
+                <include name="**/*.rsc"/>
+                <include name="**/*.properties"/>
+            </fileset>
+        </copy>
+
+        <echo message="packaging -> ${build.lib}/@PROJECT@.jar"/>
+        <jar destfile="${build.lib}/@PROJECT@.jar" basedir="${work}@PROJECT@/">
+            <manifest>
+                <!-- <attribute name="Main-Class" value="${mainclass}"/> -->
+            </manifest>
+        </jar>
+    </target>
