@@ -1,0 +1,11 @@
+--- a/org.eclipse.core.runtime/src/org/eclipse/core/internal/registry/ExtensionRegistry.java
++++ b/org.eclipse.core.runtime/src/org/eclipse/core/internal/registry/ExtensionRegistry.java
+@@ -49,7 +49,7 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
+ 		public IStatus run(IProgressMonitor monitor) {
+ 			MultiStatus result = new MultiStatus(Platform.PI_RUNTIME, IStatus.OK, Policy.bind("plugin.eventListenerError"), null); //$NON-NLS-1$
+ 			for (int i = 0; i < listenerInfos.length; i++) {
+-				ListenerInfo listenerInfo = (ListenerInfo) listenerInfos[i];
++                ExtensionRegistry.ListenerInfo listenerInfo = (ExtensionRegistry.ListenerInfo) listenerInfos[i];
+ 				if (listenerInfo.filter != null && !deltas.containsKey(listenerInfo.filter))
+ 					continue;
+ 				try {

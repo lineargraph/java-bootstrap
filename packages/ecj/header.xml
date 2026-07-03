@@ -5,11 +5,10 @@
     <property name="dest"          value="build/"/>
     <property name="work"          value="${dest}classes/"/>
     <property name="build.lib"     value="${dest}lib/"/>
-    <property name="jikes.path"    value="jikes"/>
     <property name="encoding"      value="UTF-8"/>
     <property name="mainclass"     value="org.eclipse.jdt.internal.compiler.batch.Main"/>
-    <property name="source"        value="1.4"/>
-    <property name="target"        value="1.4"/>
+    <property name="source"        value="${jVersion}"/>
+    <property name="target"        value="${jVersion}"/>
     <path id="classpath">
         <fileset dir="${build.lib}" includes="*.jar"/>
     </path>

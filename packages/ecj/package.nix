@@ -4,6 +4,7 @@
   stdenv,
   ant-bootstrap,
   fetchFromGitHub,
+  breakpointHook,
   unzip,
   xmlstarlet,
   moreutils,
@@ -22,16 +23,15 @@ let
       moreutils
       unzip
     ];
+    srcJdt = fetchFromGitHub {
+      name = "eclipse-jdt";
+      owner = "eclipse-jdt";
+      repo = "eclipse.jdt.core";
+      rev = "f3fb33fde9b5fd8fd3021a7432912bb6fbeb17c7"; # JDK_1_5
+      hash = "sha256-X6ACLma4sbBLNwi221CV3hG7lDIHD9FaArGK7ybWQD0=";
+    };
     srcs = [
-      (fetchFromGitHub {
-        name = "eclipse-jdt";
-        owner = "eclipse-jdt";
-        repo = "eclipse.jdt.core";
-        rev = "f3fb33fde9b5fd8fd3021a7432912bb6fbeb17c7"; # JDK_1_5
-        hash = "sha256-X6ACLma4sbBLNwi221CV3hG7lDIHD9FaArGK7ybWQD0=";
-        #        rev = "v_382a";
-        #        hash = "sha256-Kdes4eso3DIfDjblJ60nfg+Vyj9Gmh7F7AkHQqDcex0=";
-      })
+      finalAttrs.srcJdt
       (fetchFromGitHub {
         name = "eclipse-platform-resources";
         owner = "eclipse-platform";
@@ -95,12 +95,23 @@ let
       done
       cat ${./footer.xml} >> build.xml
 
+      if $stripSourcePath; then
+        sed 's|sourcepath=""||g' -i build.xml
+      fi
+
       runHook postConfigure
     '';
+    stripSourcePath = false;
+    antFlags = [
+      "-Dbuild.compiler=jikes"
+      "-Dbuild.compiler.exe=jikes"
+      "-DjVersion=1.4"
+    ];
+    antTarget = "org.eclipse.jdt.core";
     buildPhase = ''
       runHook preBuild
 
-      ant org.eclipse.jdt.core
+      ant ${lib.strings.join " " finalAttrs.antFlags} $antTarget
 
       runHook postBuild
     '';
@@ -121,6 +132,33 @@ let
       mainProgram = "ecj";
     };
   });
-  ecjLibs = ecjLibsJDK_1_5.overrideAttrs (final: prev: { });
+  ecjLibs = ecjLibsJDK_1_5.overrideAttrs (
+    final: prev: {
+      stripSourcePath = true;
+      version = "v_382a";
+      nativeBuildInputs = prev.nativeBuildInputs ++ [
+        ecjLibsJDK_1_5
+        breakpointHook
+      ];
+      patches = [
+        ./ecj2.patch
+      ];
+      antFlags = [
+        "-DjVersion=1.5"
+        "-Dbuild.compiler=extJavac"
+        "-Dbuild.compiler.exe=${lib.getExe ecjLibsJDK_1_5}"
+      ];
+      srcJdt = fetchFromGitHub {
+        name = "eclipse-jdt";
+        owner = "eclipse-jdt";
+        repo = "eclipse.jdt.core";
+        rev = "v_382a"; # JDK_1_5
+        hash = "sha256-Kdes4eso3DIfDjblJ60nfg+Vyj9Gmh7F7AkHQqDcex0=";
+      };
+      passthru = {
+        inherit ecjLibsJDK_1_5;
+      };
+    }
+  );
 in
-ecjLibsJDK_1_5
+ecjLibs

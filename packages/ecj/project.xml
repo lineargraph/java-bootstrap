@@ -1,13 +1,14 @@
     <target name="@PROJECT@" depends="@DEPENDENCIES@">
         <property name="projectname" value="@PROJECT@"/>
-        <echo message="compiling sources -> .class (jikes)"/>
+        <echo message="compiling sources -> .class (${build.compiler})"/>
         <mkdir dir="${work}@PROJECT@/"/>
 
         <javac srcdir="@CLASSPATH@"
                destdir="${work}@PROJECT@/"
-               compiler="jikes"
-               executable="${jikes.path}"
+               compiler="${build.compiler}"
+               executable="${build.compiler.exe}"
                encoding="${encoding}"
+               sourcepath=""
                source="${source}"
                target="${target}"
                includeantruntime="false"
