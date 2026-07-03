@@ -38,6 +38,7 @@ let
       lib
       packages
       tests
+      callPackage
       ;
     checks = collectChecks (packages // tests) // (lib.filterAttrs (_: lib.isDerivation) packages);
   }

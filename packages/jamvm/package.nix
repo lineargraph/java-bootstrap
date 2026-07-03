@@ -3,7 +3,7 @@
   lib,
   zlib,
   stdenv,
-  classpath,
+  classpath-93,
   makeE2E,
   jikes,
   ecj,
@@ -18,11 +18,11 @@ stdenv.mkDerivation (finalAttrs: {
   ];
   buildInputs = [
     zlib
-    classpath
+    classpath-93
   ];
   configureFlags = [
     "--with-java-runtime-library=gnuclasspath"
-    "--with-classpath-install-dir=${classpath}"
+    "--with-classpath-install-dir=${classpath-93}"
   ];
   src = fetchurl {
     url = "mirror://sourceforge/project/jamvm/jamvm/JamVM%20${finalAttrs.version}/jamvm-${finalAttrs.version}.tar.gz";

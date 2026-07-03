@@ -2,7 +2,7 @@
   jamvm,
   zip,
   jikes,
-  classpath,
+  classpath-93,
   stdenv,
 }:
 stdenv.mkDerivation (finalAttrs: {
@@ -12,7 +12,7 @@ stdenv.mkDerivation (finalAttrs: {
     zip
   ];
   buildInputs = [
-    classpath
+    classpath-93
   ];
   checkInputs = [ jamvm ];
   checkPhase = ''

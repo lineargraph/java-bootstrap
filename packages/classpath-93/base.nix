@@ -1,30 +1,31 @@
 {
+  stdenv,
   fetchurl,
+  pkg-config,
   findutils,
   glib,
-  jikes,
-  lib,
-  pkg-config,
-  stdenv,
   zip,
+  lib,
+  hash,
+  jikes,
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "classpath";
-  version = "0.93";
-  patches = [ ./classpath.patch ];
   buildInputs = [
-    jikes
     glib
   ];
   nativeBuildInputs = [
     pkg-config
     findutils
     zip
+  ]
+  ++ lib.optionals finalAttrs.withJikes [
+    jikes
   ];
-  configureFlags = [
+  withJikes = false;
+  configureFlags = lib.optional finalAttrs.withJikes "--with-jikes" ++ [
     "--disable-plugin"
     "--disable-gtk-peer"
-    "--with-jikes"
     "--enable-default-preferences-peer=memory"
     "--disable-gconf-peer"
     # "--disable-examples"
@@ -36,7 +37,7 @@ stdenv.mkDerivation (finalAttrs: {
   '';
   src = fetchurl {
     url = "mirror://gnu/classpath/classpath-${finalAttrs.version}.tar.gz";
-    hash = "sha256-3y0JNhKr0j/mfpQJ2JuyqOebFmT+Ky2kDhyO1pPjKUU=";
+    inherit hash;
   };
   meta = {
     license = lib.licenses.gpl2Only;
