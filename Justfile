@@ -6,6 +6,8 @@ repl:
 
 clean:
     rm -f result* repl-result*
+    chmod -fR +w patch-*
+    rm -fr patch-*
 
 @preparePatch attr:
     #!/usr/bin/env nix-shell

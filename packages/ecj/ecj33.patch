@@ -1,0 +1,31 @@
+--- a/org.eclipse.core.resources/.classpath
++++ b/org.eclipse.core.resources/.classpath
+@@ -1,7 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <classpath>
+ 	<classpathentry kind="src" path="src"/>
+-	<classpathentry kind="src" path="src_ant"/>
+ 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+ 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+ 	<classpathentry kind="output" path="bin"/>
+--- a/org.eclipse.core.runtime.compatibility/.classpath
++++ b/org.eclipse.core.runtime.compatibility/.classpath
+@@ -1,6 +1,5 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <classpath>
+-	<classpathentry kind="src" path="src-boot"/>
+ 	<classpathentry kind="src" path="src-runtime"/>
+ 	<classpathentry kind="src" path="src-model"/>
+ 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+--- a/org.eclipse.jdt.core/.project
++++ b/org.eclipse.jdt.core/.project
+@@ -4,6 +4,9 @@
+ 	<comment></comment>
+ 	<projects>
+ 		<project>org.eclipse.ant.core</project>
++		<project>org.eclipse.text</project>
++		<project>org.eclipse.core.runtime</project>
++		<project>org.eclipse.core.resources</project>
+ 	</projects>
+ 	<buildSpec>
+ 		<buildCommand>

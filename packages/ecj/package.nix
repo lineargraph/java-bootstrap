@@ -150,6 +150,22 @@ let
         withJikes = true;
       }
     );
+    ecjR3_3 = ecjBare.overrideAttrs (
+      final: prev: {
+        previousEcj = ecj501;
+        version = "3.3";
+        patches = [
+          ./ecj33.patch
+        ];
+        srcJdr = fetchFromGitHub {
+          name = "eclipse-jdt";
+          owner = "eclipse-jdt";
+          repo = "eclipse.jdt.core";
+          rev = "R3_3";
+          hash = "sha256-6bbi/IqI8LaW0CfF6nTDTZDD56zWNSGV6b4PBVyCtac=";
+        };
+      }
+    );
     ecj383 = ecjBare.overrideAttrs (
       # this is me being dumb and building an _older_ ecj version
       final: prev: {
@@ -168,7 +184,7 @@ let
         };
       }
     );
-    latest = ecj501;
+    latest = ecjR3_3;
   };
 in
 ecjVersions.latest.overrideAttrs (
