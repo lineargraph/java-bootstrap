@@ -54,6 +54,12 @@ stdenv.mkDerivation {
       rev = "c6557fef063db7fbf02744824849517ba641c56a";
       hash = "sha256-Q7VhfAZGsDSW5imKGgQoIMHZFbFyGITn1oJbYoMhqCg=";
     })
+    (fetchFromGitHub {
+      owner = "eclipse-platform";
+      repo = "eclipse.platform.text";
+      rev = "v20040625_1200";
+      hash = "sha256-kHpLTc2dwfIq37tO/FgmLQJLcG1YlDUsrNhztRuLEzA=";
+    })
   ];
   patches = [
     ./ecj.patch
@@ -72,10 +78,6 @@ stdenv.mkDerivation {
 
     chmod -R u+w .
 
-    runHook postUnpack
-  '';
-  JAVACMD = "${jamvm}/bin/jamvm";
-  buildPhase = ''
     cp ${./services-classpath.xml} org.eclipse.osgi.services/.classpath
     mkdir org.eclipse.osgi.services/src
     (
@@ -91,27 +93,28 @@ stdenv.mkDerivation {
       unzip ../utilsrc.zip
     )
 
+    runHook postUnpack
+  '';
+  JAVACMD = "${jamvm}/bin/jamvm";
+  buildPhase = ''
     cat ${./header.xml} > build.xml
     for project in org.eclipse.* org.osgi.*; do
       if [[ -f "$project"/.classpath ]]; then
-        echo "Loading project $project"
-        cat "$project/.classpath"
         classpath="$((xmlstarlet sel -t -v "//classpathentry[@kind='src']/@path" "$project"/.classpath || true) \
           | sed 's|.*|''${base}@PROJECT@/\0|' | tr '\n' :)"
-        echo "classpath: $classpath"
         dependencies="$(((xmlstarlet sel -t -v "//project/text()" "$project"/.project || true) \
           | (grep -E "^($(ls | xargs | tr ' ' '|'))\$" || true); echo prepare) | xargs | tr ' ' ,)"
         sed -e "s|@DEPENDENCIES@|$dependencies|g" -e "s|@CLASSPATH@|$classpath|g" ${./project.xml} | sed -e "s|@PROJECT@|$project|g" >> build.xml
-        sed -e "s|@DEPENDENCIES@|$dependencies|g" -e "s|@CLASSPATH@|$classpath|g" ${./project.xml} | sed -e "s|@PROJECT@|$project|g"
       fi
     done
     cat ${./footer.xml} >> build.xml
-    cat build.xml
+    IFS=$'\n'
     for srcFile in $(find . -type f -name '*.java'); do
       # Can i avoid iconv'ing _everything_?
       (iconv -f cp1250 -t utf8 "$srcFile" || continue) | sponge "$srcFile"
     done
-    ant org.eclipse.core.runtime
+    echo "Done iconv'ing"
+    ant org.eclipse.jdt.core
   '';
   installPhase = ''
     mkdir $out

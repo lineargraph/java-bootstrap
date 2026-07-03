@@ -1,3 +1,15 @@
+--- a/org.eclipse.core.resources/.classpath
++++ b/org.eclipse.core.resources/.classpath
+@@ -1,7 +1,9 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <classpath>
+ 	<classpathentry kind="src" path="src"/>
++	<!--
+ 	<classpathentry kind="src" path="src_ant"/>
++	-->
+ 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+ 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+ 	<classpathentry kind="output" path="bin"/>
 --- a/org.eclipse.core.runtime/src/org/eclipse/core/internal/registry/ExtensionRegistry.java
 +++ b/org.eclipse.core.runtime/src/org/eclipse/core/internal/registry/ExtensionRegistry.java
 @@ -49,7 +49,7 @@ public class ExtensionRegistry extends NestedRegistryModelObject implements IExt
@@ -9,3 +21,90 @@
  				if (listenerInfo.filter != null && !deltas.containsKey(listenerInfo.filter))
  					continue;
  				try {
+--- a/org.eclipse.core.runtime.compatibility/.classpath
++++ b/org.eclipse.core.runtime.compatibility/.classpath
+@@ -1,6 +1,8 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <classpath>
++    <!--
+ 	<classpathentry kind="src" path="src-boot"/>
++	-->
+ 	<classpathentry kind="src" path="src-runtime"/>
+ 	<classpathentry kind="src" path="src-model"/>
+ 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+--- a/org.eclipse.jdt.core/.classpath
++++ b/org.eclipse.jdt.core/.classpath
+@@ -1,6 +1,8 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <classpath>
++    <!--
+ 	<classpathentry output="antbin" kind="src" path="antadapter"/>
++	-->
+ 	<classpathentry kind="src" path="batch"/>
+ 	<classpathentry kind="src" path="codeassist"/>
+ 	<classpathentry kind="src" path="compiler"/>
+--- a/org.eclipse.jdt.core/.project
++++ b/org.eclipse.jdt.core/.project
+@@ -4,6 +4,9 @@
+ 	<comment></comment>
+ 	<projects>
+ 		<project>org.eclipse.ant.core</project>
++		<project>org.eclipse.text</project>
++		<project>org.eclipse.core.runtime</project>
++		<project>org.eclipse.core.resources</project>
+ 	</projects>
+ 	<buildSpec>
+ 		<buildCommand>
+--- a/org.eclipse.jdt.core/codeassist/org/eclipse/jdt/internal/codeassist/CompletionEngine.java
++++ b/org.eclipse.jdt.core/codeassist/org/eclipse/jdt/internal/codeassist/CompletionEngine.java
+@@ -37,7 +37,9 @@ import org.eclipse.jdt.internal.compiler.problem.ProblemReporter;
+ import org.eclipse.jdt.internal.compiler.util.SuffixConstants;
+ import org.eclipse.jdt.internal.compiler.util.HashtableOfObject;
+ import org.eclipse.jdt.internal.compiler.util.ObjectVector;
+-import org.eclipse.jdt.internal.core.*;
++//import org.eclipse.jdt.internal.core.*;
++import org.eclipse.jdt.internal.core.InternalNamingConventions;
++import org.eclipse.jdt.internal.core.INamingRequestor;
+ import org.eclipse.jdt.internal.core.BasicCompilationUnit;
+ import org.eclipse.jdt.internal.core.TypeConverter;
+ 
+--- a/org.eclipse.jdt.core/codeassist/org/eclipse/jdt/internal/codeassist/SelectionEngine.java
++++ b/org.eclipse.jdt.core/codeassist/org/eclipse/jdt/internal/codeassist/SelectionEngine.java
+@@ -12,7 +12,10 @@ package org.eclipse.jdt.internal.codeassist;
+ 
+ import java.util.*;
+ 
+-import org.eclipse.jdt.core.compiler.*;
++//import org.eclipse.jdt.core.compiler.*;
++import org.eclipse.jdt.core.compiler.IProblem;
++import org.eclipse.jdt.core.compiler.CharOperation;
++import org.eclipse.jdt.core.compiler.InvalidInputException;
+ import org.eclipse.jdt.internal.codeassist.impl.*;
+ import org.eclipse.jdt.internal.codeassist.select.*;
+ import org.eclipse.jdt.internal.compiler.*;
+--- a/org.eclipse.jdt.core/model/org/eclipse/jdt/internal/core/util/ElementInfoConverter.java
++++ b/org.eclipse.jdt.core/model/org/eclipse/jdt/internal/core/util/ElementInfoConverter.java
+@@ -42,7 +42,9 @@ import org.eclipse.jdt.internal.compiler.env.ISourceType;
+ 
+ import org.eclipse.jdt.internal.compiler.lookup.CompilerModifiers;
+ import org.eclipse.jdt.internal.compiler.problem.ProblemReporter;
+-import org.eclipse.jdt.internal.core.*;
++//import org.eclipse.jdt.internal.core.*;
++import org.eclipse.jdt.internal.core.SourceTypeElementInfo;
++import org.eclipse.jdt.internal.core.InitializerElementInfo;
+ import org.eclipse.jdt.internal.core.JavaElement;
+ import org.eclipse.jdt.internal.core.SourceFieldElementInfo;
+ import org.eclipse.jdt.internal.core.SourceMethodElementInfo;
+--- a/org.eclipse.jdt.core/search/org/eclipse/jdt/internal/core/search/matching/SuperTypeNamesCollector.java
++++ b/org.eclipse.jdt.core/search/org/eclipse/jdt/internal/core/search/matching/SuperTypeNamesCollector.java
+@@ -22,7 +22,11 @@ import org.eclipse.jdt.internal.compiler.CompilationResult;
+ import org.eclipse.jdt.internal.compiler.ast.*;
+ import org.eclipse.jdt.internal.compiler.lookup.*;
+ import org.eclipse.jdt.internal.compiler.problem.AbortCompilation;
+-import org.eclipse.jdt.internal.core.*;
++//import org.eclipse.jdt.internal.core.*;
++import org.eclipse.jdt.internal.core.JavaProject;
++import org.eclipse.jdt.internal.core.SourceType;
++import org.eclipse.jdt.internal.core.JavaModelManager;
++import org.eclipse.jdt.internal.core.Openable;
+ import org.eclipse.jdt.internal.core.search.*;
