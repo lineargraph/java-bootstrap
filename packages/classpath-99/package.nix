@@ -18,7 +18,7 @@
   (
     final: prev: {
       withEcj = ecj;
-      patches = [ ./classpath.patch ];
+      patches = [ ./configure.patch ];
       nativeBuildInputs = prev.nativeBuildInputs ++ [
         jamvm
         antlr3

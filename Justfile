@@ -22,12 +22,13 @@ clean:
     fi
     mv "$sourceRoot" modified
     ( cd modified
+      patchPhase
       configurePhase
     )
     cp -r modified backup
-    ( cd modified
+    ( cd backup
       patchPhase
     )
 
 @formatPatch attr *filters:
-    git diff --no-relative -p --no-index patch-{{attr}}/backup/ patch-{{attr}}/modified/ {{filters}} | sed -E -e '/index.*/d' -e '/diff.*/d' -e 's|([ab])/[^/]*/[^/]*|\1|'
+    git diff --no-relative -p --no-index patch-{{attr}}/backup/ patch-{{attr}}/modified/ ':!*.orig' {{filters}} | sed -E -e '/index.*/d' -e '/diff.*/d' -e 's|([ab])/[^/]*/[^/]*|\1|'

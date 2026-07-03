@@ -82,6 +82,18 @@
  import org.eclipse.jdt.internal.codeassist.impl.*;
  import org.eclipse.jdt.internal.codeassist.select.*;
  import org.eclipse.jdt.internal.compiler.*;
+--- a/org.eclipse.jdt.core/compiler/org/eclipse/jdt/internal/compiler/lookup/ClassScope.java
++++ b/org.eclipse.jdt.core/compiler/org/eclipse/jdt/internal/compiler/lookup/ClassScope.java
+@@ -785,6 +785,9 @@ public class ClassScope extends Scope {
+ 		if (superType.isRawType())
+ 			superType = ((RawTypeBinding) superType).type;
+ 
++		if (superType.isParameterizedType())
++			superType = ((ParameterizedTypeBinding) superType).type;
++
+ 		if (sourceType == superType) {
+ 			problemReporter().hierarchyCircularity(sourceType, superType, reference);
+ 			sourceType.tagBits |= HierarchyHasProblems;
 --- a/org.eclipse.jdt.core/model/org/eclipse/jdt/internal/core/util/ElementInfoConverter.java
 +++ b/org.eclipse.jdt.core/model/org/eclipse/jdt/internal/core/util/ElementInfoConverter.java
 @@ -42,7 +42,9 @@ import org.eclipse.jdt.internal.compiler.env.ISourceType;
