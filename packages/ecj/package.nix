@@ -12,17 +12,19 @@
   lib,
 }:
 let
-  ecjLibsJDK_1_5 = stdenv.mkDerivation (finalAttrs: {
-    pname = "ecj-libs";
-    version = "JDK_1_5";
+  ecjBare = stdenv.mkDerivation (finalAttrs: {
+    pname = "ecj";
+    withJikes = false;
+    previousEcj = null;
     nativeBuildInputs = [
-      jikes
       jamvm
       ant-bootstrap
       xmlstarlet
       moreutils
       unzip
-    ];
+    ]
+    ++ lib.optionals finalAttrs.withJikes [ jikes ]
+    ++ lib.optionals (finalAttrs.previousEcj != null) [ finalAttrs.previousEcj ];
     srcJdt = fetchFromGitHub {
       name = "eclipse-jdt";
       owner = "eclipse-jdt";
@@ -67,9 +69,6 @@ let
         hash = "sha256-kHpLTc2dwfIq37tO/FgmLQJLcG1YlDUsrNhztRuLEzA=";
       })
     ];
-    patches = [
-      ./ecj.patch
-    ];
     sourceRoot = "ecj-source";
     zippedSourceProjects = [
       "org.eclipse.osgi.services"
@@ -101,12 +100,20 @@ let
 
       runHook postConfigure
     '';
-    stripSourcePath = false;
-    antFlags = [
-      "-Dbuild.compiler=jikes"
-      "-Dbuild.compiler.exe=jikes"
-      "-DjVersion=1.4"
-    ];
+    stripSourcePath = finalAttrs.previousEcj != null;
+    javaVersion = "1.4";
+    antFlags =
+      lib.optionals finalAttrs.withJikes [
+        "-Dbuild.compiler=jikes"
+        "-Dbuild.compiler.exe=jikes"
+      ]
+      ++ lib.optionals (finalAttrs.previousEcj != null) [
+        "-Dbuild.compiler=extJavac"
+        "-Dbuild.compiler.exe=${lib.getExe finalAttrs.previousEcj}"
+      ]
+      ++ [
+        "-DjVersion=${finalAttrs.javaVersion}"
+      ];
     antTarget = "org.eclipse.jdt.core";
     buildPhase = ''
       runHook preBuild
@@ -132,33 +139,40 @@ let
       mainProgram = "ecj";
     };
   });
-  ecjLibs = ecjLibsJDK_1_5.overrideAttrs (
-    final: prev: {
-      stripSourcePath = true;
-      version = "v_382a";
-      nativeBuildInputs = prev.nativeBuildInputs ++ [
-        ecjLibsJDK_1_5
-        breakpointHook
-      ];
-      patches = [
-        ./ecj2.patch
-      ];
-      antFlags = [
-        "-DjVersion=1.5"
-        "-Dbuild.compiler=extJavac"
-        "-Dbuild.compiler.exe=${lib.getExe ecjLibsJDK_1_5}"
-      ];
-      srcJdt = fetchFromGitHub {
-        name = "eclipse-jdt";
-        owner = "eclipse-jdt";
-        repo = "eclipse.jdt.core";
-        rev = "v_382a"; # JDK_1_5
-        hash = "sha256-Kdes4eso3DIfDjblJ60nfg+Vyj9Gmh7F7AkHQqDcex0=";
-      };
-      passthru = {
-        inherit ecjLibsJDK_1_5;
-      };
-    }
-  );
+
+  ecjVersions = rec {
+    ecj501 = ecjBare.overrideAttrs (
+      final: prev: {
+        version = "0.501";
+        patches = [
+          ./ecj.patch
+        ];
+        withJikes = true;
+      }
+    );
+    ecj383 = ecjBare.overrideAttrs (
+      # this is me being dumb and building an _older_ ecj version
+      final: prev: {
+        previousEcj = ecj501;
+        version = "0.383";
+        patches = [
+          ./ecj2.patch
+        ];
+        javaVersion = "1.5";
+        srcJdt = fetchFromGitHub {
+          name = "eclipse-jdt";
+          owner = "eclipse-jdt";
+          repo = "eclipse.jdt.core";
+          rev = "v_382a";
+          hash = "sha256-Kdes4eso3DIfDjblJ60nfg+Vyj9Gmh7F7AkHQqDcex0=";
+        };
+      }
+    );
+    latest = ecj501;
+  };
 in
-ecjLibs
+ecjVersions.latest.overrideAttrs (
+  final: prev: {
+    passthru.versions = ecjVersions;
+  }
+)

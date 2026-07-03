@@ -1,3 +1,13 @@
+--- a/org.eclipse.core.resources/.classpath
++++ b/org.eclipse.core.resources/.classpath
+@@ -1,7 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <classpath>
+ 	<classpathentry kind="src" path="src"/>
+-	<classpathentry kind="src" path="src_ant"/>
+ 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+ 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+ 	<classpathentry kind="output" path="bin"/>
 --- a/org.eclipse.core.resources/src/org/eclipse/core/internal/resources/SaveManager.java
 +++ b/org.eclipse.core.resources/src/org/eclipse/core/internal/resources/SaveManager.java
 @@ -437,8 +437,8 @@ public class SaveManager implements IElementInfoFlattener, IManager {
