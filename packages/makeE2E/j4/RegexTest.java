@@ -1,3 +1,7 @@
+package j4;
+
+import util.*;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -6,11 +10,10 @@ import java.util.regex.Pattern;
 // At least these basic matches should work.
 public class RegexTest {
     public static void main(String[] a) {
-        Check.that("'abc' matches 'a.c'",   "abc".matches("a.c"));
+        Check.that("'abc' matches 'a.c'", "abc".matches("a.c"));
         Check.that("'/' matches '[/\\\\]'", "/".matches("[/\\\\]"));
 
-        Matcher m = Pattern.compile("^(.*)[/\\\\]pom\\.xml")
-                           .matcher("etc/poms/x/pom.xml");
+        Matcher m = Pattern.compile("^(.*)[/\\\\]pom\\.xml").matcher("etc/poms/x/pom.xml");
         boolean matched = m.matches();
         Check.that("pom pattern matches", matched);
         if (matched) {

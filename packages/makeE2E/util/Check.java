@@ -1,3 +1,5 @@
+package util;
+
 // Tiny assertion helper shared by all probes.
 // Java 1.4 clean (no generics / foreach / autoboxing) so jikes -source 1.4 is happy.
 public class Check {
@@ -13,7 +15,9 @@ public class Check {
     }
 
     public static void eq(String label, Object expected, Object actual) {
-        that(label + " == " + expected + " (got " + actual + ")", expected == null ? actual == null : expected.equals(actual));
+        that(
+                label + " == " + expected + " (got " + actual + ")",
+                expected == null ? actual == null : expected.equals(actual));
     }
 
     // Print the machine-readable verdict the runner greps for, and exit

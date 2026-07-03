@@ -1,10 +1,13 @@
+package j4;
+
+import util.*;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 public class ExecTest {
     public static void main(String[] a) throws Exception {
-        Process p = Runtime.getRuntime().exec(new String[]{ "hello", "-g", "marker123" });
-
+        Process p = Runtime.getRuntime().exec(new String[] {"hello", "-g", "marker123"});
 
         BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
         StringBuffer sb = new StringBuffer();

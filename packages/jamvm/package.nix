@@ -7,6 +7,7 @@
   makeE2E,
   jikes,
   ecj,
+  openjdk8_headless,
 }:
 stdenv.mkDerivation (finalAttrs: {
   name = "jamvm";
@@ -41,6 +42,18 @@ stdenv.mkDerivation (finalAttrs: {
       languageVersion = "1.5";
       virtualMachine = finalAttrs.finalPackage;
       compiler = ecj;
+      includej5 = false;
+    };
+    "ecj-1.3" = makeE2E {
+      languageVersion = "1.3";
+      virtualMachine = finalAttrs.finalPackage;
+      compiler = ecj;
+    };
+    "openjdk8-1.6" = makeE2E {
+      languageVersion = "1.6";
+      virtualMachine = finalAttrs.finalPackage;
+      compiler = openjdk8_headless;
+      includej5 = false;
     };
   };
   meta = {
