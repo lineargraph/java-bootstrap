@@ -6,6 +6,7 @@
   classpath,
   makeE2E,
   jikes,
+  ecj,
 }:
 stdenv.mkDerivation (finalAttrs: {
   name = "jamvm";
@@ -32,9 +33,14 @@ stdenv.mkDerivation (finalAttrs: {
   '';
   passthru.tests = {
     "jikes-1.5" = makeE2E {
-      languageVersion = "1.5";
+      languageVersion = "1.4";
       virtualMachine = finalAttrs.finalPackage;
       compiler = jikes;
+    };
+    "ecj-1.5" = makeE2E {
+      languageVersion = "1.5";
+      virtualMachine = finalAttrs.finalPackage;
+      compiler = ecj;
     };
   };
   meta = {

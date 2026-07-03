@@ -25,7 +25,7 @@ stdenv.mkDerivation {
   ];
   buildPhase = ''
     mkdir dist
-    ${lib.getExe compiler} -d dist *.java
+    ${lib.getExe compiler} -source ${languageVersion} -target ${languageVersion} -d dist *.java
     (
       cd dist
       zip -r ../tests.jar .
