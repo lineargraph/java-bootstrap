@@ -7,22 +7,29 @@ let
   lib = pkgs.lib;
   callPackage = lib.callPackageWith (pkgs // autoArgs);
   autoArgs = outputs // sources;
-  loadDir =
-    dir:
-    lib.pipe dir [
-      builtins.readDir
-      lib.attrNames
-      (lib.map (name: {
-        inherit name;
-        value = callPackage "${dir}/${name}" { };
-      }))
-      lib.listToAttrs
-    ];
   packages = lib.filesystem.packagesFromDirectoryRecursive {
     inherit callPackage;
     directory = ./packages;
   };
-  tests = loadDir ./tests;
+  tests = lib.filesystem.packagesFromDirectoryRecursive {
+    inherit callPackage;
+    directory = ./tests;
+  };
+  collectChecks =
+    root:
+    lib.pipe root [
+      (lib.collect lib.isDerivation)
+      (lib.map (drv: [
+        drv
+        (lib.attrValues (collectChecks (drv.passthru or { })))
+      ]))
+      (lib.flatten)
+      (lib.map (value: {
+        inherit value;
+        name = "check-" + value.name;
+      }))
+      lib.listToAttrs
+    ];
   outputs = {
     shell = callPackage ./shell.nix { };
     treefmt-wrapper = callPackage ./treefmt-wrapper.nix { };
@@ -32,7 +39,7 @@ let
       packages
       tests
       ;
-    checks = packages // tests;
+    checks = collectChecks (packages // tests) // (lib.filterAttrs (_: lib.isDerivation) packages);
   }
   // packages;
 in

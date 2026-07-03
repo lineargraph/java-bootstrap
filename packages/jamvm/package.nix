@@ -4,6 +4,8 @@
   zlib,
   stdenv,
   classpath,
+  makeE2E,
+  jikes,
 }:
 stdenv.mkDerivation (finalAttrs: {
   name = "jamvm";
@@ -28,6 +30,13 @@ stdenv.mkDerivation (finalAttrs: {
     mkdir -p $out/nix-support
     echo "export BOOTCLASSPATH=\"$out/share/jamvm/classes.zip:$out/lib/rt.jar\"" > $out/nix-support/setup-hook
   '';
+  passthru.tests = {
+    "jikes-1.5" = makeE2E {
+      languageVersion = "1.5";
+      virtualMachine = finalAttrs.finalPackage;
+      compiler = jikes;
+    };
+  };
   meta = {
     licenses = lib.licenses.gpl2Only;
     mainProgram = "jamvm";

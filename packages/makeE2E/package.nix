@@ -2,26 +2,30 @@
   strace,
   hello,
   zip,
+  lib,
   stdenv,
-  jikes,
-  jamvm,
+}:
+{
+  compiler,
+  languageVersion,
+  virtualMachine,
 }:
 stdenv.mkDerivation {
-  name = "jamvm-tests";
+  name = "${compiler.name}-${virtualMachine.name}-tests-${languageVersion}";
   src = ./.;
   nativeBuildInputs = [
-    jikes
+    compiler
     zip
   ];
   buildInputs = [ ];
   checkInputs = [
-    jamvm
+    virtualMachine
     hello
     strace
   ];
   buildPhase = ''
     mkdir dist
-    jikes -sourcepath . -d dist *.java
+    ${lib.getExe compiler} -d dist *.java
     (
       cd dist
       zip -r ../tests.jar .
@@ -34,7 +38,7 @@ stdenv.mkDerivation {
   checkPhase = ''
     for test in *Test.java; do
       echo Running $test
-      jamvm -cp tests.jar ''${test%.*}
+      ${lib.getExe virtualMachine} -cp tests.jar ''${test%.*}
     done
   '';
   doCheck = true;

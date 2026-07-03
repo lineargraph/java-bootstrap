@@ -3,3 +3,6 @@ build-all:
 
 repl:
     nix repl --file default.nix
+
+clean:
+    rm -f result* repl-result*
