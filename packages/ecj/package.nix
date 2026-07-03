@@ -9,6 +9,7 @@
   unzip,
   xmlstarlet,
   moreutils,
+  bash,
 }:
 stdenv.mkDerivation {
   pname = "ecj";
@@ -102,9 +103,12 @@ stdenv.mkDerivation {
       if [[ -f "$project"/.classpath ]]; then
         classpath="$((xmlstarlet sel -t -v "//classpathentry[@kind='src']/@path" "$project"/.classpath || true) \
           | sed 's|.*|''${base}@PROJECT@/\0|' | tr '\n' :)"
+        files="$(echo "$classpath" | tr : '\n' |
+          sed 's|.*|<fileset dir="\0"><include name="**/*.rsc"/><include name="**/*.properties"/></fileset>|g' | tr '\n' ' ')"
+        echo "$files"
         dependencies="$(((xmlstarlet sel -t -v "//project/text()" "$project"/.project || true) \
           | (grep -E "^($(ls | xargs | tr ' ' '|'))\$" || true); echo prepare) | xargs | tr ' ' ,)"
-        sed -e "s|@DEPENDENCIES@|$dependencies|g" -e "s|@CLASSPATH@|$classpath|g" ${./project.xml} | sed -e "s|@PROJECT@|$project|g" >> build.xml
+        sed -e "s|@DEPENDENCIES@|$dependencies|g" -e "s|@FILES@|$files|g" -e "s|@CLASSPATH@|$classpath|g" ${./project.xml} | sed -e "s|@PROJECT@|$project|g" >> build.xml
       fi
     done
     cat ${./footer.xml} >> build.xml
@@ -119,5 +123,10 @@ stdenv.mkDerivation {
   installPhase = ''
     mkdir $out
     cp -r build/lib $out
+
+    mkdir $out/bin
+    echo '#!${bash}/bin/bash' >> $out/bin/ecj
+    echo "${jamvm}/bin/jamvm -cp '$(find $out/lib | xargs | tr ' ' ':')' org.eclipse.jdt.internal.compiler.batch.Main" >> $out/bin/ecj
+    chmod +x $out/bin/ecj
   '';
 }
