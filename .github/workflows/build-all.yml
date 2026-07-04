@@ -64,6 +64,7 @@ jobs:
                 });
                 const buildEvents = readline.createInterface({input: build.stdout});
                 for await (const line of buildEvents) {
+                    console.log('build output: ', line)
                     const event = JSON.parse(line);
                     if (!event.success) {
                         await setCheck(event, {
