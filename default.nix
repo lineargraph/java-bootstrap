@@ -15,6 +15,29 @@ let
     inherit callPackage;
     directory = ./tests;
   };
+  collectChecks' =
+    root:
+    if lib.isDerivation root then
+      [
+        {
+          value = root;
+          path = [ ];
+        }
+      ]
+      ++ collectChecks' root.passthru
+    else if lib.isAttrs root then
+      lib.pipe root [
+        lib.attrsToList
+        (lib.concatMap (
+          parent:
+          lib.map (child: {
+            value = child.value;
+            path = [ parent.name ] ++ child.path;
+          }) (collectChecks' parent.value)
+        ))
+      ]
+    else
+      [ ];
   collectChecks =
     root:
     lib.pipe root [
@@ -40,7 +63,15 @@ let
       tests
       callPackage
       ;
-    checks = collectChecks (packages // tests) // (lib.filterAttrs (_: lib.isDerivation) packages);
+    checks = lib.pipe (collectChecks' (packages // { inherit tests; })) [
+      (lib.map (
+        { path, value }: {
+          inherit value;
+          name = lib.join "." path;
+        }
+      ))
+      lib.listToAttrs
+    ];
   }
   // packages;
 in
