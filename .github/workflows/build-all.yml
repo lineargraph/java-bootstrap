@@ -22,7 +22,7 @@ jobs:
           primary-key: lix-cache-${{runner.os}}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
           restore-prefixes-first-match: lix-cache-${{runner.os}}
       - run: |
-          nix-build . -A pkgs.lixPackageSets.stable.nix-fast-build -o nix-fast-build
+          nix-build . -A pkgs.nix-fast-build -o nix-fast-build
       - uses: actions/github-script@v9
         with:
           script: |
