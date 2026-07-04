@@ -12,15 +12,16 @@ jobs:
       checks: write
     steps:
       - uses: actions/checkout@v7
-      - uses: samueldr/lix-gha-installer-action@a0fee77b2a98bb7c5c0ed7ae6d6ad4903dbdad0d # @latest
+      - uses: NixOs/nix-installer-action@6b8548fe06acfb0155a50ab5d561accb215764cc # @main
         with:
-          extra_nix_config: |
+          extra-conf: |
             keep-env-derivations = true
             keep-outputs = true
       - uses: nix-community/cache-nix-action@v7
+        id: nix-cache
         with:
-          primary-key: lix-cache-${{runner.os}}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
-          restore-prefixes-first-match: lix-cache-${{runner.os}}
+          primary-key: nix-cache-${{runner.os}}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
+          restore-prefixes-first-match: nix-cache-${{runner.os}}
       - run: |
           nix-build . -A pkgs.nix-fast-build -o nix-fast-build
       - uses: actions/github-script@v9
@@ -98,3 +99,9 @@ jobs:
             } finally {
                 await Promise.all(Object.values(checks))
             }
+
+      - name: Always Cache
+        if: always() && steps.nix-cache.outputs.hit-primary-key != 'true'
+        uses: nix-community/cache-nix-action/save@v7
+        with:
+          primary-key: ${{ steps.nix-cache.outputs.primary-key }}
