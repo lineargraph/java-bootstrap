@@ -34,6 +34,7 @@ jobs:
                 const name = event.attr;
                 const prev = checks[name];
                 const id = prev ? (await prev).id : null;
+                core.info(`Setting check ${name}, with previous id ${id} (from ${prev})`)
                 data.owner = 'lineargraph';
                 data.repo = 'java-bootstrap';
                 data.head_sha = '${{ github.sha }}';
@@ -66,6 +67,7 @@ jobs:
                                 'text': (event.error ? '\nError:\n```\n' + event.error + '\n```' : '')
                             },
                         })
+                        await core.setFailed(`Attribute ${event.attr} failed`);
                         continue
                     }
                     if (event.type === 'BUILD') {
@@ -90,8 +92,9 @@ jobs:
                     throw "forwarding nix-fast-build failure";
                 }
             }
+            
             try {
-                await work()                
+                await work()
             } finally {
-                await Promise.all(Object.values(checks))                
+                await Promise.all(Object.values(checks))
             }
