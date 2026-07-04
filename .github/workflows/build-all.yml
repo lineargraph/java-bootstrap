@@ -35,7 +35,7 @@ jobs:
                 const name = event.attr;
                 const prev = checks[name];
                 const id = prev ? (await prev).id : null;
-                core.info(`Setting check ${name}, with previous id ${id} (from ${prev})`)
+                core.info(`Setting check ${name}, with previous id ${id} (from ${await prev})`)
                 data.owner = 'lineargraph';
                 data.repo = 'java-bootstrap';
                 data.head_sha = '${{ github.sha }}';
@@ -49,7 +49,7 @@ jobs:
                 }
                 if (data.status === 'completed')
                     data.completed_at = new Date().toISOString();
-                checks[name] = id ? github.rest.checks.update(data) : github.rest.checks.create(data)
+                checks[name] = (id ? github.rest.checks.update(data) : github.rest.checks.create(data)).then(it => it.data)
             }
             
             async function work() {
