@@ -17,6 +17,8 @@ jobs:
           extra-conf: |
             keep-env-derivations = true
             keep-outputs = true
+            # https://github.com/nix-community/cache-nix-action/issues/170
+            auto-optimise-store = false
       - uses: nix-community/cache-nix-action@v7
         id: nix-cache
         with:
