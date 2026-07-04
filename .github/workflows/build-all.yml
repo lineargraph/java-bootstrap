@@ -37,6 +37,7 @@ jobs:
                 data.owner = 'lineargraph';
                 data.repo = 'java-bootstrap';
                 data.head_sha = '${{ github.sha }}';
+                data.name = data.name || name;
                 data.output = data.output || {};
                 data.output.title = data.output.title || `nix-build -A ${name}`;
                 if (id)
@@ -79,7 +80,13 @@ jobs:
                         })
                     }
                 }
+                
+                if (build.exitCode) {
+                    throw "forwarding nix-fast-build failure";
+                }
             }
-            
-            await work()
-            await Promise.all(Object.values(checks))  
+            try {
+                await work()                
+            } finally {
+                await Promise.all(Object.values(checks))                
+            }
