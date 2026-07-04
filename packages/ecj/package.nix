@@ -87,7 +87,7 @@ let
       cp -r build/lib $out
       mkdir $out/bin
       echo '#!${bash}/bin/bash' >> $out/bin/ecj
-      echo "${jamvm}/bin/jamvm -cp '$(find $out/lib/ | xargs | tr ' ' ':')' org.eclipse.jdt.internal.compiler.batch.Main" '"$@"' >> $out/bin/ecj
+      echo "${jamvm}/bin/jamvm \''${ECJ_JVM_OPTS:-} -cp '$(find $out/lib/ | xargs | tr ' ' ':')' org.eclipse.jdt.internal.compiler.batch.Main" '"$@"' >> $out/bin/ecj
       chmod +x $out/bin/ecj
 
       runHook postInstall
