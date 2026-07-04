@@ -119,4 +119,4 @@ jobs:
         if: always() && steps.nix-cache.outputs.hit-primary-key != 'true'
         uses: nix-community/cache-nix-action/save@v7
         with:
-          primary-key: ${{ steps.nix-cache.outputs.primary-key }}
+          primary-key: nix-cache-${{runner.os}}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
