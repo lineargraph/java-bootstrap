@@ -6,7 +6,7 @@ repl:
 
 clean:
     rm -f result* repl-result*
-    chmod -fR +w patch-*
+    chmod -fR +w patch-* || true
     rm -fr patch-*
 
 @preparePatch attr:
