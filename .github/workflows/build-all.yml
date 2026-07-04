@@ -1,0 +1,82 @@
+name: Build
+
+on: push
+jobs:
+  check-attrs:
+    name: All Checks
+    runs-on: ubuntu-22.04
+    permissions:
+      checks: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: samueldr/lix-gha-installer-action@a0fee77b2a98bb7c5c0ed7ae6d6ad4903dbdad0d # @latest
+        with:
+          extra_nix_config: |
+            keep-env-derivations = true
+            keep-outputs = true
+      - uses: nix-community/cache-nix-action@v7
+        with:
+          primary-key: lix-cache-${{runner.os}}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
+          restore-prefixes-first-match: lix-cache-${{runner.os}}
+      - run: |
+          nix-build . -A pkgs.lixPackageSets.stable.nix-fast-build -o nix-fast-build
+      - uses: actions/github-script@v9
+        with:
+          script: |
+            const {spawn} = await import('node:child_process');
+            const readline = await import('readline');
+            const checks = {};
+            
+            async function setCheck(event, data) {
+                const name = event.attr;
+                const prev = checks[name];
+                const id = prev ? (await prev).id : null;
+                data.owner = 'lineargraph';
+                data.repo = 'java-bootstrap';
+                data.head_sha = '${{ github.sha }}';
+                data.output = data.output || {};
+                data.output.title = data.output.title || `nix-build -A ${name}`;
+                if (id)
+                    data.check_run_id = id;
+                checks[name] = id ? github.rest.checks.update(data) : github.rest.checks.create(data)
+            }
+            
+            async function work() {
+                const build = spawn('nix-fast-build/bin/nix-fast-build', ['--file', '.', '-A', 'checks', '--stream-json-lines', '--skip-cached'], {
+                    stdio: ['inherit', 'pipe', 'inherit'],
+                });
+                const buildEvents = readline.createInterface({input: build.stderr});
+                for await (const line of buildEvents) {
+                    const event = JSON.parse(line);
+                    if (!event.success) {
+                        await setCheck(event, {
+                            'status': 'completed',
+                            'conclusion': 'failure',
+                            'output': {
+                                'summary': `Failed in ${event.type} phase.\n`,
+                                'text': (event.error ? '\nError:\n```\n' + event.error + '\n```' : '')
+                            },
+                        })
+                        continue
+                    }
+                    if (event.type === 'BUILD') {
+                        await setCheck(event, {
+                            'status': 'completed',
+                            'conclusion': 'success',
+                            'output': {
+                                'summary': 'Build successfully',
+                            }
+                        })
+                    } else {
+                        await setCheck(event, {
+                            'status': 'in_progress',
+                            'output': {
+                                'summary': 'Build started',
+                            }
+                        })
+                    }
+                }
+            }
+            
+            await work()
+            await Promise.all(Object.values(checks))  
