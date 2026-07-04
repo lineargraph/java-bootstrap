@@ -30,15 +30,19 @@ jobs:
             const {spawn} = await import('node:child_process');
             const readline = await import('readline');
             const checks = {};
+            const repoInfo = {
+                owner : 'lineargraph',
+                repo : 'java-bootstrap',
+                head_sha : '${{ github.sha }}',
+            };
+            
             
             async function setCheck(event, data) {
                 const name = event.attr;
                 const prev = checks[name];
                 const id = prev ? (await prev).id : null;
                 core.notice(`Setting check ${name}, with previous id ${id}`)
-                data.owner = 'lineargraph';
-                data.repo = 'java-bootstrap';
-                data.head_sha = '${{ github.sha }}';
+                data = Object.assign(data, repoInfo)
                 data.name = data.name || name;
                 data.output = data.output || {};
                 data.output.title = data.output.title || `nix-build -A ${name}`;
@@ -97,7 +101,18 @@ jobs:
             try {
                 await work()
             } finally {
-                await Promise.all(Object.values(checks))
+                for (const missing of (await Promise.all(Object.values(checks))).filter(it => it.status !== "completed")) {
+                    await github.rest.checks.update(Object.assign({
+                        name: missing.name,
+                        check_run_id: missing.id,
+                        status: "completed",
+                        conclusion: "skipped",
+                        output: {
+                            summary: "Skipped (probably reachable through another check)",
+                            title: missing.output.title,
+                        }
+                    }, repoInfo))
+                }
             }
 
       - name: Always Cache
