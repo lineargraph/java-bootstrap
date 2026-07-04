@@ -48,7 +48,7 @@ jobs:
                 const build = spawn('nix-fast-build/bin/nix-fast-build', ['--file', '.', '-A', 'checks', '--stream-json-lines', '--skip-cached'], {
                     stdio: ['inherit', 'pipe', 'inherit'],
                 });
-                const buildEvents = readline.createInterface({input: build.stderr});
+                const buildEvents = readline.createInterface({input: build.stdout});
                 for await (const line of buildEvents) {
                     const event = JSON.parse(line);
                     if (!event.success) {
