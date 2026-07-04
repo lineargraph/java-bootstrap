@@ -58,7 +58,7 @@ let
 
       runHook postConfigure
     '';
-    stripSourcePath = finalAttrs.previousEcj != null;
+    stripSourcePath = false;
     javaVersion = "1.4";
     antFlags =
       lib.optionals finalAttrs.withJikes [
@@ -127,12 +127,6 @@ let
             rev = "v20040625_1200";
             hash = "sha256-pVZjBZbvMtK3/AYGjOfjBDIRvPe18GKj8yWLRFcZVAE=";
           })
-          #    (fetchFromGitHub {
-          #      owner = "osgi";
-          #      repo = "osgi";
-          #      rev = "01111010ac6c558ca5f169afec32a39847858110";
-          #      hash = "sha256-S+BDCRcie8gG4nzsGHo3Cx/orY9QP2Gw9XgdYD/H6/Y=";
-          #    })
           (fetchFromGitHub {
             name = "eclipse-equinox";
             owner = "eclipse-equinox";
@@ -220,43 +214,20 @@ let
               hash = "sha256-E3471tnuBqrJ8CwNK79t0gIptfRrYN9TjsvHDovk09U=";
             })
           ];
-        #      2 EventDispatcher.java
-        #      2 EventListeners.java
-        #      2 EventManager.java
-        #      2 ListenerQueue.java
-        #      2 URLStreamHandlerSetter.java
-        #      3 Constants.java
-        #      3 Handler.java
         zippedSourceProjects = [
           "org.eclipse.osgi.services"
         ];
+        stripSourcePath = true;
         passthru.tests = {
           "ecj-1.6" = makeE2E {
             languageVersion = "1.6";
             virtualMachine = openjdk8_headless;
+            includej5 = false; # We do not yet have a classpath that can handle this
             compiler = final.finalPackage;
           };
         };
       }
     );
-    #    ecj383 = ecjBare.overrideAttrs (
-    #      # this is me being dumb and building an _older_ ecj version
-    #      final: prev: {
-    #        previousEcj = ecj501;
-    #        version = "0.383";
-    #        patches = [
-    #          ./ecj2.patch
-    #        ];
-    #        javaVersion = "1.5";
-    #        srcJdt = fetchFromGitHub {
-    #          name = "eclipse-jdt";
-    #          owner = "eclipse-jdt";
-    #          repo = "eclipse.jdt.core";
-    #          rev = "v_382a";
-    #          hash = "sha256-Kdes4eso3DIfDjblJ60nfg+Vyj9Gmh7F7AkHQqDcex0=";
-    #        };
-    #      }
-    #    );
     latest = ecjR3_3;
   };
 in
