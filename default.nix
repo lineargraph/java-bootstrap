@@ -11,10 +11,6 @@ let
     inherit callPackage;
     directory = ./packages;
   };
-  tests = lib.filesystem.packagesFromDirectoryRecursive {
-    inherit callPackage;
-    directory = ./tests;
-  };
   outputs = {
     shell = callPackage ./shell.nix { };
     treefmt-wrapper = callPackage ./treefmt-wrapper.nix { };
@@ -22,10 +18,9 @@ let
       pkgs
       lib
       packages
-      tests
       callPackage
       ;
-    checks = outputs.collectChecks (packages // { inherit tests; });
+    checks = outputs.collectChecks packages;
   }
   // packages;
 in
