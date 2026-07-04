@@ -35,7 +35,7 @@ jobs:
                 const name = event.attr;
                 const prev = checks[name];
                 const id = prev ? (await prev).id : null;
-                core.info(`Setting check ${name}, with previous id ${id} (from ${await prev})`)
+                core.notice(`Setting check ${name}, with previous id ${id}`)
                 data.owner = 'lineargraph';
                 data.repo = 'java-bootstrap';
                 data.head_sha = '${{ github.sha }}';

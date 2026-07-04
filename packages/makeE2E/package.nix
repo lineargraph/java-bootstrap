@@ -50,7 +50,7 @@ stdenv.mkDerivation {
       zip -r ../tests.jar .
     )
   '';
-  installPhase = builtins.abort ''
+  installPhase = ''
     mkdir $out
     cp tests.jar $out
   '';
