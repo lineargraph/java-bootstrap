@@ -227,7 +227,9 @@ let
         #      2 URLStreamHandlerSetter.java
         #      3 Constants.java
         #      3 Handler.java
-        zippedSourceProjects = [ ];
+        zippedSourceProjects = [
+          "org.eclipse.osgi.services"
+        ];
         passthru.tests = {
           "ecj-1.6" = makeE2E {
             languageVersion = "1.6";
