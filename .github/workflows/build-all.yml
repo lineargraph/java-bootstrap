@@ -40,8 +40,13 @@ jobs:
                 data.name = data.name || name;
                 data.output = data.output || {};
                 data.output.title = data.output.title || `nix-build -A ${name}`;
-                if (id)
+                if (id) {
                     data.check_run_id = id;
+                } else {
+                    data.started_at = new Date().toISOString();
+                }
+                if (data.status === 'completed')
+                    data.completed_at = new Date().toISOString();
                 checks[name] = id ? github.rest.checks.update(data) : github.rest.checks.create(data)
             }
             
