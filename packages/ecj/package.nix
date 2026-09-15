@@ -11,8 +11,10 @@
   moreutils,
   bash,
   lib,
+  writeScriptBin,
 }:
 let
+  # TODO: most of this should be its own callPackage'd file so i can call it with .override instead
   ecjBare = stdenv.mkDerivation (finalAttrs: {
     pname = "ecj";
     withJikes = false;
@@ -92,6 +94,13 @@ let
 
       runHook postInstall
     '';
+    passthru.withJvm =
+      jvm:
+      writeScriptBin "ecj" ''
+        ${lib.getExe jvm} ''${ECJ_JVM_OPTS:-} \
+          -cp "$(find ${finalAttrs.finalPackage.out}/lib/ | xargs | tr ' ' ':')" org.eclipse.jdt.internal.compiler.batch.Main \
+          "$@"
+      '';
     meta = {
       description = "The Eclipse Java Compiler";
       mainProgram = "ecj";
@@ -218,12 +227,14 @@ let
           "org.eclipse.osgi.services"
         ];
         stripSourcePath = true;
-        passthru.tests = {
-          "ecj-1.6" = makeE2E {
-            languageVersion = "1.6";
-            virtualMachine = openjdk8_headless;
-            includej5 = false; # TODO: We do not yet have a classpath that can handle this
-            compiler = final.finalPackage;
+        passthru = prev.passthru // {
+          tests = {
+            "ecj-1.6" = makeE2E {
+              languageVersion = "1.6";
+              virtualMachine = openjdk8_headless;
+              includej5 = false; # TODO: We do not yet have a classpath that can handle this
+              compiler = final.finalPackage;
+            };
           };
         };
       }
@@ -233,6 +244,8 @@ let
 in
 ecjVersions.latest.overrideAttrs (
   final: prev: {
-    passthru.versions = ecjVersions;
+    passthru = prev.passthru // {
+      versions = ecjVersions;
+    };
   }
 )

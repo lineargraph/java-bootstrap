@@ -43,12 +43,12 @@ stdenv.mkDerivation (finalAttrs: {
     "ecj" = makeE2E {
       inherit languageVersion;
       virtualMachine = finalAttrs.finalPackage;
-      compiler = ecj;
+      compiler = ecj.withJvm finalAttrs.finalPackage;
     };
     "ecj-1.3" = makeE2E {
       languageVersion = "1.3";
       virtualMachine = finalAttrs.finalPackage;
-      compiler = ecj;
+      compiler = ecj.withJvm finalAttrs.finalPackage;
     };
     "openjdk8" = makeE2E {
       inherit languageVersion;
