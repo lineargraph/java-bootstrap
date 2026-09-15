@@ -11,7 +11,10 @@ stdenv.mkDerivation {
     url = "https://archive.apache.org/dist/ant/source/apache-ant-1.8.4-src.tar.gz";
     hash = "sha256-328Krt4lSdxDR7ly78gDbAGnN8qsVFuLpDohaHvFIec=";
   };
-  patches = [ ./ant.patch ];
+  postUnpack = ''
+    substituteInPlace ./$sourceRoot/build.xml \
+      --replace-fail 'depends="jars,test-jar"' 'depends="jars"'
+  '';
   nativeBuildInputs = [
     jamvm-14
     jikes
