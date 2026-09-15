@@ -1,12 +1,4 @@
 {
-  fetchurl,
-  findutils,
-  glib,
-  jikes,
-  lib,
-  pkg-config,
-  stdenv,
-  zip,
   callPackage,
 }:
 (callPackage ./base.nix { hash = "sha256-3y0JNhKr0j/mfpQJ2JuyqOebFmT+Ky2kDhyO1pPjKUU="; })

@@ -6,7 +6,6 @@
   stdenv,
   ant-bootstrap,
   fetchFromGitHub,
-  breakpointHook,
   unzip,
   xmlstarlet,
   moreutils,
@@ -223,7 +222,7 @@ let
           "ecj-1.6" = makeE2E {
             languageVersion = "1.6";
             virtualMachine = openjdk8_headless;
-            includej5 = false; # We do not yet have a classpath that can handle this
+            includej5 = false; # TODO: We do not yet have a classpath that can handle this
             compiler = final.finalPackage;
           };
         };

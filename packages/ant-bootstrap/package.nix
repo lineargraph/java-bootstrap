@@ -1,8 +1,5 @@
 {
   lib,
-  breakpointHook,
-  strace,
-  vim,
   fetchurl,
   stdenv,
   jikes,
@@ -18,11 +15,6 @@ stdenv.mkDerivation {
   nativeBuildInputs = [
     jamvm-14
     jikes
-  ]
-  ++ [
-    strace
-    breakpointHook
-    vim
   ];
   buildInputs = [ jamvm-14 ];
   JAVACMD = "${lib.getExe jamvm-14}";

@@ -1,10 +1,9 @@
 {
-  strace,
-  hello,
   zip,
   lib,
   findutils,
   stdenv,
+  hello,
 }:
 {
   compiler,
@@ -19,7 +18,14 @@ let
     let
       name = lib.baseNameOf path;
     in
-    (if name == "j5" then includej5 else type != "file" || lib.strings.hasSuffix ".java" name);
+    (
+      if name == "j5" then
+        includej5
+      else if name == "j6" then
+        includej6
+      else
+        type != "file" || lib.strings.hasSuffix ".java" name
+    );
 in
 stdenv.mkDerivation {
   name = "${compiler.name}-${virtualMachine.name}-tests-${languageVersion}";
@@ -35,8 +41,8 @@ stdenv.mkDerivation {
   buildInputs = [ ];
   checkInputs = [
     virtualMachine
+    # We use hello as a test bin to shell out to
     hello
-    strace
   ];
   buildPhase = ''
     mkdir dist
