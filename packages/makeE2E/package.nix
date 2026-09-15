@@ -4,6 +4,7 @@
   findutils,
   stdenv,
   hello,
+  breakpointHook,
 }:
 {
   compiler,
@@ -37,6 +38,7 @@ stdenv.mkDerivation {
     compiler
     zip
     findutils
+    breakpointHook
   ];
   buildInputs = [ ];
   checkInputs = [
@@ -63,7 +65,7 @@ stdenv.mkDerivation {
   checkPhase = ''
     for test in $(find . -name '*Test.java'); do
       echo Running $test
-      ${lib.getExe virtualMachine} -cp tests.jar ''$(echo "$test" | tr / . | sed -e 's|\.\.||' -e 's|\.java||')
+      ${lib.getExe virtualMachine} -verbose -cp tests.jar ''$(echo "$test" | tr / . | sed -e 's|\.\.||' -e 's|\.java||')
     done
   '';
   doCheck = true;

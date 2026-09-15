@@ -60,3 +60,9 @@ drwxr-xr-x 1 nea users   52 Jul  3 17:10  tests
 -rw-r--r-- 1 nea users  157 Jul  3 18:38  treefmt.nix
 -rw-r--r-- 1 nea users   64 Jun 28 17:39  treefmt-wrapper.nix
 ```
+
+
+## ECJ insights
+
+BOOTCLASSPATH is used both for compiling against _and_ for running ecj. ideally, i create two ecj derivations, one for the jars and one that wraps with a jvm.
+

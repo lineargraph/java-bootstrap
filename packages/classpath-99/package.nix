@@ -20,7 +20,10 @@ let
       (
         final: prev: {
           withEcj = ecj;
-          patches = [ ./configure.patch ];
+          patches = [
+            ./configure.patch
+            ./classpath-99.patch
+          ];
           nativeBuildInputs = prev.nativeBuildInputs ++ [
             jamvm-14
           ];

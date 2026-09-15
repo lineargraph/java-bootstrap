@@ -8,9 +8,11 @@
   jikes,
   ecj,
   openjdk8_headless,
+  classpath ? classpath-93,
+  languageVersion ? "1.4",
 }:
 stdenv.mkDerivation (finalAttrs: {
-  name = "jamvm";
+  name = "jamvm-${languageVersion}";
   version = "1.5.1";
   nativeBuildInputs = [ ];
   patches = [
@@ -18,11 +20,11 @@ stdenv.mkDerivation (finalAttrs: {
   ];
   buildInputs = [
     zlib
-    classpath-93
+    classpath
   ];
   configureFlags = [
     "--with-java-runtime-library=gnuclasspath"
-    "--with-classpath-install-dir=${classpath-93}"
+    "--with-classpath-install-dir=${classpath}"
   ];
   src = fetchurl {
     url = "mirror://sourceforge/project/jamvm/jamvm/JamVM%20${finalAttrs.version}/jamvm-${finalAttrs.version}.tar.gz";
@@ -33,27 +35,25 @@ stdenv.mkDerivation (finalAttrs: {
     echo "export BOOTCLASSPATH=\"$out/share/jamvm/classes.zip:$out/lib/rt.jar\"" > $out/nix-support/setup-hook
   '';
   passthru.tests = {
-    "jikes-1.5" = makeE2E {
+    "jikes" = makeE2E {
       languageVersion = "1.4";
       virtualMachine = finalAttrs.finalPackage;
       compiler = jikes;
     };
-    "ecj-1.5" = makeE2E {
-      languageVersion = "1.5";
+    "ecj" = makeE2E {
+      inherit languageVersion;
       virtualMachine = finalAttrs.finalPackage;
       compiler = ecj;
-      includej5 = false;
     };
     "ecj-1.3" = makeE2E {
       languageVersion = "1.3";
       virtualMachine = finalAttrs.finalPackage;
       compiler = ecj;
     };
-    "openjdk8-1.6" = makeE2E {
-      languageVersion = "1.6";
+    "openjdk8" = makeE2E {
+      inherit languageVersion;
       virtualMachine = finalAttrs.finalPackage;
       compiler = openjdk8_headless;
-      includej5 = false;
     };
   };
   meta = {
