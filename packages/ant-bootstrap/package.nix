@@ -6,7 +6,7 @@
   fetchurl,
   stdenv,
   jikes,
-  jamvm,
+  jamvm-14,
 }:
 stdenv.mkDerivation {
   name = "ant-bootstrap";
@@ -16,7 +16,7 @@ stdenv.mkDerivation {
   };
   patches = [ ./ant.patch ];
   nativeBuildInputs = [
-    jamvm
+    jamvm-14
     jikes
   ]
   ++ [
@@ -24,8 +24,8 @@ stdenv.mkDerivation {
     breakpointHook
     vim
   ];
-  buildInputs = [ jamvm ];
-  JAVACMD = "${lib.getExe jamvm}";
+  buildInputs = [ jamvm-14 ];
+  JAVACMD = "${lib.getExe jamvm-14}";
   JAVAC = "${lib.getExe jikes}";
   ANT_OPTS = "-Dbuild.compiler=jikes -Djvm=jamvm";
   buildPhase = ''

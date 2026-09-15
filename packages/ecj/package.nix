@@ -1,7 +1,7 @@
 {
   jikes,
   openjdk8_headless,
-  jamvm,
+  jamvm-14,
   makeE2E,
   stdenv,
   ant-bootstrap,
@@ -18,8 +18,9 @@ let
     pname = "ecj";
     withJikes = false;
     previousEcj = null;
+    jamvm = jamvm-14;
     nativeBuildInputs = [
-      jamvm
+      finalAttrs.jamvm
       ant-bootstrap
       xmlstarlet
       moreutils
@@ -34,7 +35,7 @@ let
     ];
     zippedSourceProjectsStr = lib.strings.join " " finalAttrs.zippedSourceProjects;
     unpackPhase = builtins.readFile ./unpacker.sh;
-    JAVACMD = "${jamvm}/bin/jamvm";
+    JAVACMD = "${finalAttrs.jamvm}/bin/jamvm";
     configurePhase = ''
       runHook preConfigure
 
@@ -87,7 +88,7 @@ let
       cp -r build/lib $out
       mkdir $out/bin
       echo '#!${bash}/bin/bash' >> $out/bin/ecj
-      echo "${jamvm}/bin/jamvm \''${ECJ_JVM_OPTS:-} -cp '$(find $out/lib/ | xargs | tr ' ' ':')' org.eclipse.jdt.internal.compiler.batch.Main" '"$@"' >> $out/bin/ecj
+      echo "${lib.getExe finalAttrs.jamvm} \''${ECJ_JVM_OPTS:-} -cp '$(find $out/lib/ | xargs | tr ' ' ':')' org.eclipse.jdt.internal.compiler.batch.Main" '"$@"' >> $out/bin/ecj
       chmod +x $out/bin/ecj
 
       runHook postInstall

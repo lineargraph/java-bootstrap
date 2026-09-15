@@ -9,7 +9,7 @@
   zip,
   callPackage,
   ecj,
-  jamvm,
+  jamvm-14,
 }:
 
 let
@@ -22,7 +22,7 @@ let
           withEcj = ecj;
           patches = [ ./configure.patch ];
           nativeBuildInputs = prev.nativeBuildInputs ++ [
-            jamvm
+            jamvm-14
           ];
           configureFlags = prev.configureFlags ++ [
             # TODO: this is used for com.sun.tools.javac.Main, but will only load the jar itself, not the rest of the classpath
